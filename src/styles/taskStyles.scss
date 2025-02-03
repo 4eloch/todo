@@ -1,0 +1,443 @@
+// src/styles/taskStyles.scss
+
+.tasks-page {
+  padding: 20px;
+  text-align: center;
+  background-color: #f8f9fa;
+}
+
+.tasks-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+
+  @media (min-width: 768px) {
+    flex-direction: row; // На больших экранах элементы располагаются горизонтально
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.tasks-title {
+  font-size: 2em;
+  margin-bottom: 10px;
+  color: #333;
+
+  @media (min-width: 768px) {
+    flex: 1; // Заголовок занимает всё доступное место
+    text-align: left; // Выравнивание текста слева
+  }
+}
+
+.tasks-actions {
+  display: flex;
+  gap: 10px; // Пространство между элементами
+  align-items: center;
+
+  @media (max-width: 768px) {
+    flex-direction: column; // На маленьких экранах элементы располагаются вертикально
+    width: 100%; // Элементы занимают всю ширину
+  }
+
+  @media (min-width: 768px) {
+    flex: 1; // Элементы занимают часть экрана
+    justify-content: flex-end; // Выравнивание справа
+  }
+}
+
+.search-bar {
+  position: relative; // Для позиционирования иконки
+  display: flex;
+  align-items: center;
+  width: 100%; // Занимает всю доступную ширину
+
+  @media (min-width: 768px) {
+    max-width: 500px; // На больших экранах ограничиваем ширину
+  }
+}
+
+.search-input-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+
+.search-input {
+  flex: 1; // Инпут занимает максимум места
+  padding: 8px 40px 8px 12px; // Добавляем отступ справа для иконки "крестик"
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.25);
+    outline: none;
+  }
+}
+
+.clear-search-button {
+  position: absolute; // Размещаем иконку "крестик" справа
+  right: 0; // Отступ от правого края
+  top: 50%; // Центрируем вертикально
+  transform: translateY(-50%); // Корректируем центрирование
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6c757d; // Серый цвет иконки
+
+  &:hover {
+    color: #dc3545; // Красный цвет при наведении
+  }
+
+  &:active {
+    color: #c82333; // Ярко-красный цвет при клике
+  }
+}
+
+.add-task-button {
+  padding: 8px 12px;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #218838;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%; // На маленьких экранах кнопка занимает всю ширину
+    margin-top: 10px; // Добавляем отступ сверху
+  }
+}
+
+.reset-search-button {
+  padding: 8px 12px;
+  background-color: #ffc107;
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #e0a800;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%; // На маленьких экранах кнопка занимает всю ширину
+    margin-top: 10px; // Добавляем отступ сверху
+  }
+}
+
+.task-board {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  background-color: #f8f9fa;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.task-column {
+  width: 30%;
+  padding: 16px;
+  background-color: #f4f4f4;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  transition: background-color 0.2s ease;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+
+  &.over {
+    background-color: #e0f7fa;
+  }
+
+  h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #333;
+  }
+}
+
+.comment {
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-left: 4px solid #007bff;
+  border-radius: 4px;
+
+  p {
+    margin-bottom: 5px;
+    color: #333;
+  }
+
+  button {
+    margin-top: 5px;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: #0056b3;
+    }
+
+    &[data-expanded="true"] {
+      background-color: #dc3545; // Красная кнопка для "Скрыть ответы"
+      &:hover {
+        background-color: #c82333;
+      }
+    }
+
+    &[data-expanded="false"] {
+      background-color: #28a745; // Зелёная кнопка для "Показать ответы"
+      &:hover {
+        background-color: #218838;
+      }
+    }
+  }
+}
+
+.reply-button {
+  padding: 16px;
+}
+
+// src/styles/taskStyles.scss
+
+.task-card {
+  padding: 16px;
+  margin-bottom: 16px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &.dragging {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &.completed-task {
+    background-color: #d4edda; // Легкий зелёный фон для выполненных задач
+    border-color: #c3e6cb;
+
+    .task-title {
+      color: #155724; // Тёмно-зелёный цвет для названия выполненной задачи
+    }
+  }
+
+  .task-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+
+    .task-title-container {
+      display: flex;
+      align-items: center;
+      gap: 10px; // Пространство между чекбоксом и названием задачи
+      cursor: pointer; // Указываем, что можно кликнуть по чекбоксу и названию
+    }
+
+    .task-title {
+      font-size: 1.2em;
+      margin: 0;
+      color: #333;
+      white-space: normal; // Разрешаем перенос текста
+      word-break: break-word; // Перенос слов
+      max-width: calc(
+        100% - 40px
+      ); // Ограничиваем ширину названия задачи, чтобы оставить место для чекбокса
+      text-decoration: none; // По умолчанию без зачёркивания
+      transition: color 0.2s ease;
+
+      &.completed {
+        text-decoration: line-through; // Зачёркиваем название выполненной задачи
+        color: #6c757d; // Серый цвет для выполненной задачи
+      }
+    }
+
+    .toggle-completion-button {
+      background: #ffc107; // Цвет для невыполненной задачи
+      color: #000;
+      border: none;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        opacity: 0.9;
+      }
+
+      &[style*="background-color: #28a745"] {
+        background-color: #28a745; // Цвет для выполненной задачи
+        color: #fff;
+      }
+    }
+
+    .task-actions {
+      display: flex;
+      gap: 10px;
+
+      button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        transition: color 0.2s ease;
+
+        &:hover {
+          opacity: 0.9;
+        }
+      }
+
+      .delete-task-button {
+        color: #dc3545;
+
+        &:hover {
+          color: #c82333;
+        }
+      }
+
+      .attach-file-button {
+        color: #17a2b8;
+
+        &:hover {
+          color: #138496;
+        }
+      }
+    }
+  }
+
+  p {
+    margin-bottom: 8px;
+    color: #666;
+  }
+
+  .attached-files {
+    margin-top: 10px;
+
+    h4 {
+      font-size: 1em;
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      .attached-file {
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+
+        div {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        a {
+          text-decoration: none;
+          color: #007bff;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+
+        img {
+          max-width: 100px;
+          max-height: 100px;
+          object-fit: cover;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+        }
+
+        .remove-file-button {
+          background: none;
+          border: none;
+          color: #dc3545;
+          font-size: 16px;
+          cursor: pointer;
+          transition: color 0.2s ease;
+
+          &:hover {
+            color: #c82333;
+          }
+        }
+      }
+    }
+  }
+
+  .add-comment-button {
+    padding: 8px 12px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: #218838;
+    }
+  }
+}
+
+.comments-section {
+  margin-top: 10px;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+
+  h4 {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+    color: #333;
+  }
+
+  p {
+    margin-bottom: 8px;
+    color: #666;
+  }
+}
+
+.add-task-button {
+  padding: 9px 13px;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #218838;
+  }
+}

@@ -1,0 +1,327 @@
+.tasks-page {
+  padding: 20px;
+  text-align: center;
+  background-color: #f8f9fa;
+}
+
+.tasks-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+@media (min-width: 768px) {
+  .tasks-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.tasks-title {
+  font-size: 2em;
+  margin-bottom: 10px;
+  color: #333;
+}
+@media (min-width: 768px) {
+  .tasks-title {
+    flex: 1;
+    text-align: left;
+  }
+}
+
+.tasks-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+@media (max-width: 768px) {
+  .tasks-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+}
+@media (min-width: 768px) {
+  .tasks-actions {
+    flex: 1;
+    justify-content: flex-end;
+  }
+}
+
+.search-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+@media (min-width: 768px) {
+  .search-bar {
+    max-width: 500px;
+  }
+}
+
+.search-input-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+
+.search-input {
+  flex: 1;
+  padding: 8px 40px 8px 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.search-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.25);
+  outline: none;
+}
+
+.clear-search-button {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6c757d;
+}
+.clear-search-button:hover {
+  color: #dc3545;
+}
+.clear-search-button:active {
+  color: #c82333;
+}
+
+.add-task-button {
+  padding: 8px 12px;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.add-task-button:hover {
+  background-color: #218838;
+}
+@media (max-width: 768px) {
+  .add-task-button {
+    width: 100%;
+    margin-top: 10px;
+  }
+}
+
+.reset-search-button {
+  padding: 8px 12px;
+  background-color: #ffc107;
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.reset-search-button:hover {
+  background-color: #e0a800;
+}
+@media (max-width: 768px) {
+  .reset-search-button {
+    width: 100%;
+    margin-top: 10px;
+  }
+}
+
+.task-board {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  background-color: #f8f9fa;
+}
+@media (max-width: 768px) {
+  .task-board {
+    flex-direction: column;
+  }
+}
+
+.task-column {
+  width: 30%;
+  padding: 16px;
+  background-color: #f4f4f4;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  transition: background-color 0.2s ease;
+}
+@media (max-width: 768px) {
+  .task-column {
+    width: 100%;
+  }
+}
+.task-column.over {
+  background-color: #e0f7fa;
+}
+.task-column h2 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.comment {
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-left: 4px solid #007bff;
+  border-radius: 4px;
+}
+.comment p {
+  margin-bottom: 5px;
+  color: #333;
+}
+.comment button {
+  margin-top: 5px;
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.comment button:hover {
+  background-color: #0056b3;
+}
+.comment button[data-expanded=true] {
+  background-color: #dc3545;
+}
+.comment button[data-expanded=true]:hover {
+  background-color: #c82333;
+}
+.comment button[data-expanded=false] {
+  background-color: #28a745;
+}
+.comment button[data-expanded=false]:hover {
+  background-color: #218838;
+}
+
+.reply-button {
+  padding: 16px;
+}
+
+.task-card {
+  padding: 16px;
+  margin-bottom: 16px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.task-card.dragging {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.task-card .task-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.task-card .task-header .task-actions {
+  display: flex;
+  gap: 10px;
+}
+.task-card .task-header .task-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.task-card .task-header .task-actions button:hover {
+  color: #0056b3;
+}
+.task-card .task-header .task-actions .delete-task-button {
+  color: #dc3545;
+}
+.task-card .task-header .task-actions .delete-task-button:hover {
+  color: #c82333;
+}
+.task-card .task-header .task-actions .attach-file-button {
+  color: #17a2b8;
+  padding: 10px 0px;
+}
+.task-card .task-header .task-actions .attach-file-button:hover {
+  color: #59959e;
+  cursor: pointer;
+}
+.task-card p {
+  margin-bottom: 8px;
+  color: #666;
+}
+.task-card .attached-files {
+  margin-top: 10px;
+}
+.task-card .attached-files h4 {
+  font-size: 1em;
+  margin-bottom: 5px;
+  color: #333;
+}
+.task-card .attached-files ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.task-card .attached-files ul .attached-file {
+  margin-bottom: 5px;
+}
+.task-card .attached-files ul .attached-file a {
+  text-decoration: none;
+  color: #007bff;
+}
+.task-card .attached-files ul .attached-file a:hover {
+  text-decoration: underline;
+}
+.task-card .add-comment-button {
+  padding: 8px 12px;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.task-card .add-comment-button:hover {
+  background-color: #218838;
+}
+
+.comments-section {
+  margin-top: 10px;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+.comments-section h4 {
+  font-size: 1.1em;
+  margin-bottom: 10px;
+  color: #333;
+}
+.comments-section p {
+  margin-bottom: 8px;
+  color: #666;
+}
+
+.add-task-button {
+  padding: 9px 13px;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.add-task-button:hover {
+  background-color: #218838;
+}/*# sourceMappingURL=taskStyles.css.map */
