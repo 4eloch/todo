@@ -1,7 +1,17 @@
-import { TasksActionTypes, Task, Comment } from "../types/tasksTypes";
+import {
+  ADD_TASK,
+  EDIT_TASK,
+  DELETE_TASK,
+  ADD_COMMENT,
+  DELETE_COMMENT,
+  SET_SEARCH_QUERY,
+  TOGGLE_TASK_COMPLETION,
+  UPDATE_TASK_TIME,
+} from "../constants";
+import { TasksActionTypes, ITask, IComment } from "../types/tasksTypes";
 
 interface TasksState {
-  tasks: Task[];
+  tasks: ITask[];
   searchQuery: string;
 }
 
@@ -11,22 +21,21 @@ const initialState: TasksState = {
 };
 
 const updateComments = (
-  comments: Comment[],
-  parentId: number,
-  newReply: Comment
-): Comment[] => {
+  comments: IComment[],
+  commentId: number,
+  newComment?: Partial<IComment>
+): IComment[] => {
   return comments.map((comment) => {
-    if (comment.id === parentId) {
-      return {
-        ...comment,
-        replies: [...comment.replies, newReply], // Добавляем новый ответ
-      };
+    if (comment.id === commentId) {
+      if (newComment) {
+        return { ...comment, ...newComment }; // Обновляем комментарий
+      }
+      return { ...comment, isDeleted: true }; // Помечаем комментарий как удаленный
     }
 
-    // Если родительский комментарий находится глубже, продолжаем рекурсию
     return {
       ...comment,
-      replies: updateComments(comment.replies, parentId, newReply),
+      replies: updateComments(comment.replies, commentId, newComment), // Рекурсивно проверяем дочерние комментарии
     };
   });
 };
@@ -36,12 +45,12 @@ const tasksReducer = (
   action: TasksActionTypes
 ): TasksState => {
   switch (action.type) {
-    case "ADD_TASK":
+    case ADD_TASK:
       const newTasks = [...state.tasks, action.payload];
       localStorage.setItem("tasks", JSON.stringify(newTasks));
       return { ...state, tasks: newTasks };
 
-    case "EDIT_TASK": {
+    case EDIT_TASK: {
       const updatedTasks = state.tasks.map((task) =>
         task.id === action.payload.id ? action.payload : task
       );
@@ -49,14 +58,14 @@ const tasksReducer = (
       return { ...state, tasks: updatedTasks };
     }
 
-    case "DELETE_TASK":
+    case DELETE_TASK:
       const filteredTasks = state.tasks.filter(
         (task) => task.id !== action.payload
       );
       localStorage.setItem("tasks", JSON.stringify(filteredTasks));
       return { ...state, tasks: filteredTasks };
 
-    case "ADD_COMMENT": {
+    case ADD_COMMENT: {
       const { taskId, parentId, comment } = action.payload;
 
       const updatedTasks = state.tasks.map((task) => {
@@ -81,11 +90,27 @@ const tasksReducer = (
       return { ...state, tasks: updatedTasks };
     }
 
-    case "SET_SEARCH_QUERY": {
+    case DELETE_COMMENT: {
+      const { taskId, commentId } = action.payload;
+
+      const updatedTasks = state.tasks.map((task) => {
+        if (task.id !== taskId) return task;
+
+        return {
+          ...task,
+          comments: updateComments(task.comments, commentId),
+        };
+      });
+
+      localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+      return { ...state, tasks: updatedTasks };
+    }
+
+    case SET_SEARCH_QUERY: {
       return { ...state, searchQuery: action.payload }; // Обновляем поисковый запрос
     }
 
-    case "TOGGLE_TASK_COMPLETION": {
+    case TOGGLE_TASK_COMPLETION: {
       const { taskId, isCompleted } = action.payload;
 
       const updatedTasks = state.tasks.map((task) => {
@@ -109,7 +134,7 @@ const tasksReducer = (
       return { ...state, tasks: updatedTasks };
     }
 
-    case "UPDATE_TASK_TIME": {
+    case UPDATE_TASK_TIME: {
       const { taskId, timeSpent } = action.payload;
 
       const updatedTasks = state.tasks.map((task) =>

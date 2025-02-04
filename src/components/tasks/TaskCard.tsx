@@ -11,11 +11,11 @@ import {
   toggleTaskCompletion,
   updateTaskTime,
 } from "../../redux/actions/tasksActions";
-import { TasksActionTypes, Task } from "../../redux/types/tasksTypes";
+import { TasksActionTypes, ITask } from "../../redux/types/tasksTypes";
 import { Dispatch } from "redux";
 
 interface TaskCardProps {
-  task: Task;
+  task: ITask;
 }
 
 const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
@@ -67,7 +67,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
       const newFiles = Array.from(e.target.files).map((file) =>
         URL.createObjectURL(file)
       );
-      const updatedTask: Task = {
+      const updatedTask: ITask = {
         ...task,
         files: [...task.files, ...newFiles], // Добавляем новые файлы к существующим
       };
@@ -77,7 +77,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
 
   // Функция для удаления файла
   const handleFileRemove = (index: number) => {
-    const updatedTask: Task = {
+    const updatedTask: ITask = {
       ...task,
       files: task.files.filter((_: any, i: any) => i !== index), // Удаляем файл по индексу
     };

@@ -5,7 +5,7 @@ import {
   setSearchQuery,
   //@ts-ignore
   TasksActionTypes,
-} from "../../../redux/actions/tasksActions";
+} from "../redux/actions/tasksActions";
 import { Dispatch } from "redux";
 import { FiX } from "react-icons/fi"; // Импортируем иконку "крестик"
 

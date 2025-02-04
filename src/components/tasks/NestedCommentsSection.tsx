@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import AddCommentModal from "../modals/AddCommentModal";
+import CommentCard from "./CommentCard";
 import { useDispatch } from "react-redux";
-import { addComment } from "../../redux/actions/tasksActions";
-import { Comment } from "../../redux/types/tasksTypes";
-import { TasksActionTypes } from "../../redux/types/tasksTypes";
+import { TasksActionTypes, IComment } from "../../redux/types/tasksTypes";
 import { Dispatch } from "redux";
 import "../../styles/taskStyles.scss";
 
 interface NestedCommentsProps {
-  comments: Comment[];
+  comments: IComment[];
   taskId: number;
 }
 
@@ -20,8 +19,6 @@ const NestedCommentsSection: React.FC<NestedCommentsProps> = ({
 
   // Состояние для отслеживания разворачиваемых комментариев
   const [expandedComments, setExpandedComments] = useState<number[]>([]);
-
-  // Состояние для модального окна ответа
   const [showReplyModal, setShowReplyModal] = React.useState(false);
   const [parentId, setParentId] = React.useState<number | undefined>(undefined);
 
@@ -48,31 +45,36 @@ const NestedCommentsSection: React.FC<NestedCommentsProps> = ({
   };
 
   // Рекурсивное отображение комментариев
-  const renderComments = (comments: Comment[], depth = 0) => {
-    return comments.map((comment) => (
-      <div key={comment.id} style={{ marginLeft: `${depth * 20}px` }}>
-        <div className="comment">
-          <p>{comment.text}</p>
-          {/* Кнопка для добавления ответа */}
-          <button onClick={() => handleReply(comment.id)}>Ответить</button>
+  const renderComments = (comments: IComment[], depth = 0) => {
+    const styled = { marginLeft: `${depth === 0 ? 0 : depth + 20}px` };
 
-          {/* Кнопка для показа/скрытия ответов */}
-          {comment.replies.length > 0 && (
-            <button
-              onClick={() => toggleExpand(comment.id)}
-              className="toggle-replies-button"
-              data-expanded={expandedComments.includes(comment.id)}
-            >
-              {expandedComments.includes(comment.id)
-                ? "Скрыть ответы"
-                : "Показать ответы"}
-            </button>
-          )}
-        </div>
+    return comments.map((comment) => (
+      <div key={comment.id} style={styled}>
+        <CommentCard comment={comment} taskId={taskId} />
+
+        {/* Кнопка для добавления ответа */}
+        {!comment.isDeleted && (
+          <button
+            className="reply-comment-button"
+            onClick={() => handleReply(comment.id)}
+            style={{
+              marginLeft: `${depth * 20}px`,
+              marginTop: "5px",
+              padding: "5px 10px",
+              background: "#28a745",
+              color: "#fff",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+              transition: "background-color 0.2s ease",
+            }}
+          >
+            Ответить
+          </button>
+        )}
 
         {/* Рекурсивное отображение ответов, если они развернуты */}
-        {expandedComments.includes(comment.id) &&
-          renderComments(comment.replies, depth + 1)}
+        {renderComments(comment.replies, depth + 1)}
       </div>
     ));
   };

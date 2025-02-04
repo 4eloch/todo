@@ -1,12 +1,15 @@
-export const ADD_TASK = "ADD_TASK";
-export const EDIT_TASK = "EDIT_TASK";
-export const DELETE_TASK = "DELETE_TASK";
-export const ADD_COMMENT = "ADD_COMMENT";
-export const SET_SEARCH_QUERY = "SET_SEARCH_QUERY";
-export const TOGGLE_TASK_COMPLETION = "TOGGLE_TASK_COMPLETION";
-export const UPDATE_TASK_TIME = "UPDATE_TASK_TIME";
+import {
+  ADD_TASK,
+  EDIT_TASK,
+  DELETE_TASK,
+  ADD_COMMENT,
+  DELETE_COMMENT,
+  TOGGLE_TASK_COMPLETION,
+  UPDATE_TASK_TIME,
+  SET_SEARCH_QUERY,
+} from "../constants";
 
-export interface Task {
+export interface ITask {
   id: number;
   title: string;
   description: string;
@@ -15,65 +18,74 @@ export interface Task {
   dueDate: string;
   priority: string;
   status: string;
-  subtasks: Task[];
-  comments: Comment[];
+  subtasks: ITask[];
+  comments: IComment[];
   files: string[];
   isCompleted: boolean;
 }
 
-export interface Comment {
+export interface IComment {
   id: number;
   text: string;
-  replies: Comment[];
+  replies: IComment[];
   isDeleted?: boolean;
 }
 
-export interface AddTaskAction {
+export interface IAddTaskAction {
   type: typeof ADD_TASK;
-  payload: Task;
+  payload: ITask;
 }
 
-export interface EditTaskAction {
+export interface IEditTaskAction {
   type: typeof EDIT_TASK;
-  payload: Task;
+  payload: ITask;
 }
 
-export interface DeleteTaskAction {
+export interface IDeleteTaskAction {
   type: typeof DELETE_TASK;
   payload: number;
 }
 
-export interface AddCommentAction {
+export interface IAddCommentAction {
   type: typeof ADD_COMMENT;
-  payload: { taskId: number; parentId?: number; comment: Comment };
+  payload: { taskId: number; parentId?: number; comment: IComment };
 }
 
-export interface SetSearchQueryAction {
+export interface IDeleteCommentAction {
+  type: typeof DELETE_COMMENT;
+  payload: {
+    taskId: number;
+    commentId: number;
+  };
+}
+
+export interface ISetSearchQueryAction {
   type: typeof SET_SEARCH_QUERY;
   payload: string;
 }
 
-export interface ToggleTaskCompletionAction {
+export interface IToggleTaskCompletionAction {
   type: typeof TOGGLE_TASK_COMPLETION;
   payload: {
-    taskId: number; // ID задачи
-    isCompleted: boolean; // Новое состояние выполнения
+    taskId: number;
+    isCompleted: boolean;
   };
 }
 
-export interface UpdateTaskTimeAction {
+export interface IUpdateTaskTimeAction {
   type: typeof UPDATE_TASK_TIME;
   payload: {
-    taskId: number; // ID задачи
-    timeSpent: number; // Обновленное время в секундах
+    taskId: number;
+    timeSpent: number;
   };
 }
 
 export type TasksActionTypes =
-  | AddTaskAction
-  | EditTaskAction
-  | DeleteTaskAction
-  | AddCommentAction
-  | SetSearchQueryAction
-  | ToggleTaskCompletionAction
-  | UpdateTaskTimeAction;
+  | IAddTaskAction
+  | IEditTaskAction
+  | IDeleteTaskAction
+  | IAddCommentAction
+  | IDeleteCommentAction
+  | ISetSearchQueryAction
+  | IToggleTaskCompletionAction
+  | IUpdateTaskTimeAction;

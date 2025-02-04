@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { editTask } from "../../redux/actions/tasksActions";
-import { Task, TasksActionTypes } from "../../redux/types/tasksTypes";
+import { ITask, TasksActionTypes } from "../../redux/types/tasksTypes";
 import { Dispatch } from "redux";
 import "../../styles/formStyles.scss";
 
@@ -19,7 +19,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
 }) => {
   const dispatch = useDispatch<Dispatch<TasksActionTypes>>();
   const tasks = useSelector((state: any) => state.tasks.tasks);
-  const taskToEdit = tasks.find((task: Task) => task.id === taskId);
+  const taskToEdit = tasks.find((task: ITask) => task.id === taskId);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -40,7 +40,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const updatedTask: Task = {
+    const updatedTask: ITask = {
       id: taskId,
       title,
       description,

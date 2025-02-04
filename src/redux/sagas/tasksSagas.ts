@@ -1,31 +1,35 @@
 //@ts-ignore
 import { put, takeEvery } from "redux-saga/effects";
+import { TasksActionTypes } from "../types/tasksTypes";
 import {
   ADD_TASK,
   EDIT_TASK,
   DELETE_TASK,
   ADD_COMMENT,
-  TasksActionTypes,
-} from "../types/tasksTypes";
+  COMMENT_ADDED,
+  TASK_ADDED,
+  TASK_DELETED,
+  TASK_EDITED,
+} from "../constants";
 
 function* addTaskSaga(action: TasksActionTypes) {
   // Логика добавления задачи
-  yield put({ type: "TASK_ADDED", payload: action.payload });
+  yield put({ type: TASK_ADDED, payload: action.payload });
 }
 
 function* editTaskSaga(action: TasksActionTypes) {
   // Логика редактирования задачи
-  yield put({ type: "TASK_EDITED", payload: action.payload });
+  yield put({ type: TASK_EDITED, payload: action.payload });
 }
 
 function* deleteTaskSaga(action: TasksActionTypes) {
   // Логика удаления задачи
-  yield put({ type: "TASK_DELETED", payload: action.payload });
+  yield put({ type: TASK_DELETED, payload: action.payload });
 }
 
 function* addCommentSaga(action: TasksActionTypes) {
   // Логика добавления комментария
-  yield put({ type: "COMMENT_ADDED", payload: action.payload });
+  yield put({ type: COMMENT_ADDED, payload: action.payload });
 }
 
 function* watchAddTask() {

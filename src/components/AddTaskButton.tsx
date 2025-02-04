@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import AddTaskModal from "../../modals/AddTaskModal";
 import { Dispatch } from "redux";
+import AddTaskModal from "./modals/AddTaskModal";
 
 const AddTaskButton: React.FC = () => {
   const dispatch = useDispatch<Dispatch<any>>();

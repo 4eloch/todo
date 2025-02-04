@@ -1,7 +1,7 @@
 import React from "react";
 import TaskBoard from "../tasks/TaskBoard";
-import SearchBar from "../tasks/Buttons/SearchBar";
-import AddTaskButton from "../tasks/Buttons/AddTaskButton";
+import SearchBar from "../SearchBar";
+import AddTaskButton from "../AddTaskButton";
 
 const TasksPage: React.FC = () => {
   return (

@@ -1,20 +1,15 @@
 import React from "react";
 import { useDrop } from "react-dnd";
 import TaskCard from "./TaskCard";
-import {
-  editTask,
-  //@ts-ignore
-  TasksActionTypes,
-  //@ts-ignore
-  Task,
-} from "../../redux/actions/tasksActions";
+import { editTask } from "../../redux/actions/tasksActions";
+import { TasksActionTypes, ITask } from "../../redux/types/tasksTypes";
 import { Dispatch } from "redux";
 import { useDispatch } from "react-redux";
 
 interface TaskColumnProps {
   title: string;
-  tasks: Task[];
-  filteredTasks: Task[];
+  tasks: ITask[];
+  filteredTasks: ITask[];
 }
 
 const TaskColumn: React.FC<TaskColumnProps> = ({
@@ -22,9 +17,7 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
   tasks,
   filteredTasks,
 }) => {
-  const dispatch = useDispatch<Dispatch<TasksActionTypes>>(); // Типизируем dispatch
-
-  // Настройка drop для колонки
+  const dispatch = useDispatch<Dispatch<TasksActionTypes>>();
   const [{ isOver }, drop] = useDrop({
     accept: "TASK",
     drop: (item: any) => {
@@ -32,7 +25,7 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
 
       if (!taskToUpdate) return;
 
-      const updatedTask: Task = {
+      const updatedTask: ITask = {
         ...taskToUpdate,
         status: title,
       };

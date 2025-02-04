@@ -2,29 +2,34 @@ import {
   ADD_TASK,
   EDIT_TASK,
   DELETE_TASK,
+  DELETE_COMMENT,
   ADD_COMMENT,
   SET_SEARCH_QUERY,
-  AddTaskAction,
-  EditTaskAction,
-  DeleteTaskAction,
-  Task,
-  Comment,
+  TOGGLE_TASK_COMPLETION,
+  UPDATE_TASK_TIME,
+} from "../constants";
+import {
+  ITask,
+  IAddTaskAction,
+  IEditTaskAction,
+  IDeleteTaskAction,
+  IComment,
 } from "../types/tasksTypes";
 
 // Создание новой задачи
-export const addTask = (task: Task): AddTaskAction => ({
+export const addTask = (task: ITask): IAddTaskAction => ({
   type: ADD_TASK,
   payload: task,
 });
 
 // Редактирование задачи
-export const editTask = (task: Task): EditTaskAction => ({
+export const editTask = (task: ITask): IEditTaskAction => ({
   type: EDIT_TASK,
   payload: task,
 });
 
 // Удаление задачи
-export const deleteTask = (taskId: number): DeleteTaskAction => ({
+export const deleteTask = (taskId: number): IDeleteTaskAction => ({
   type: DELETE_TASK,
   payload: taskId,
 });
@@ -32,12 +37,11 @@ export const deleteTask = (taskId: number): DeleteTaskAction => ({
 // Добавление комментария к задаче
 export const addComment = (
   taskId: number,
-  parentId?: number,
-  //@ts-ignore
-  comment: Comment
+  comment: IComment,
+  parentId?: number
 ): {
   type: typeof ADD_COMMENT;
-  payload: { taskId: number; parentId?: number; comment: Comment };
+  payload: { taskId: number; parentId?: number; comment: IComment };
 } => ({
   type: ADD_COMMENT,
   payload: { taskId, parentId, comment },
@@ -47,10 +51,10 @@ export const deleteComment = (
   taskId: number,
   commentId: number
 ): {
-  type: "DELETE_COMMENT";
+  type: typeof DELETE_COMMENT;
   payload: { taskId: number; commentId: number };
 } => ({
-  type: "DELETE_COMMENT",
+  type: DELETE_COMMENT,
   payload: { taskId, commentId },
 });
 
@@ -66,10 +70,10 @@ export const toggleTaskCompletion = (
   taskId: number,
   isCompleted: boolean
 ): {
-  type: "TOGGLE_TASK_COMPLETION";
+  type: typeof TOGGLE_TASK_COMPLETION;
   payload: { taskId: number; isCompleted: boolean };
 } => ({
-  type: "TOGGLE_TASK_COMPLETION",
+  type: TOGGLE_TASK_COMPLETION,
   payload: { taskId, isCompleted },
 });
 
@@ -78,9 +82,9 @@ export const updateTaskTime = (
   taskId: number,
   timeSpent: number
 ): {
-  type: "UPDATE_TASK_TIME";
+  type: typeof UPDATE_TASK_TIME;
   payload: { taskId: number; timeSpent: number };
 } => ({
-  type: "UPDATE_TASK_TIME",
+  type: UPDATE_TASK_TIME,
   payload: { taskId, timeSpent },
 });

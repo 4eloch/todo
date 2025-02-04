@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { addComment } from "../../redux/actions/tasksActions";
-import { TasksActionTypes, Comment } from "../../redux/types/tasksTypes";
+import { TasksActionTypes, IComment } from "../../redux/types/tasksTypes";
 import { Dispatch } from "redux";
 
 interface AddCommentModalProps {
@@ -24,13 +24,13 @@ const AddCommentModal: React.FC<AddCommentModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const newComment: Comment = {
+    const newComment: IComment = {
       id: Date.now(),
       text: commentText,
       replies: [],
     };
 
-    dispatch(addComment(taskId, parentId, newComment));
+    dispatch(addComment(taskId, newComment, parentId));
     setCommentText(""); // Сбрасываем текст
     onHide();
   };

@@ -214,6 +214,52 @@
   }
 }
 
+.comment-card {
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-left: 4px solid #007bff;
+  border-radius: 4px;
+
+  p {
+    margin-bottom: 5px;
+    color: #333;
+  }
+
+  .comment-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: color 0.2s ease;
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+
+    .edit-comment-button {
+      color: #007bff;
+
+      &:hover {
+        color: #0056b3;
+      }
+    }
+
+    .delete-comment-button {
+      color: #dc3545;
+
+      &:hover {
+        color: #c82333;
+      }
+    }
+  }
+}
+
 .reply-button {
   padding: 16px;
 }
@@ -276,6 +322,7 @@
     }
 
     .toggle-completion-button {
+      padding: 0;
       background: #ffc107; // Цвет для невыполненной задачи
       color: #000;
       border: none;
