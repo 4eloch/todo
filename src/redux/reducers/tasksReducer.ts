@@ -88,9 +88,22 @@ const tasksReducer = (
     case "TOGGLE_TASK_COMPLETION": {
       const { taskId, isCompleted } = action.payload;
 
-      const updatedTasks = state.tasks.map((task) =>
-        task.id === taskId ? { ...task, isCompleted } : task
-      );
+      const updatedTasks = state.tasks.map((task) => {
+        if (task.id !== taskId) return task;
+
+        // Определяем новый статус задачи
+        const newStatus = isCompleted
+          ? "Done"
+          : task.status === "Done"
+            ? "Development"
+            : task.status;
+
+        return {
+          ...task,
+          isCompleted,
+          status: newStatus, // Обновляем статус задачи
+        };
+      });
 
       localStorage.setItem("tasks", JSON.stringify(updatedTasks));
       return { ...state, tasks: updatedTasks };
