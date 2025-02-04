@@ -3,6 +3,7 @@ import {
   EDIT_TASK,
   DELETE_TASK,
   ADD_COMMENT,
+  EDIT_COMMENT,
   DELETE_COMMENT,
   SET_SEARCH_QUERY,
   TOGGLE_TASK_COMPLETION,
@@ -10,12 +11,12 @@ import {
 } from "../constants";
 import { TasksActionTypes, ITask, IComment } from "../types/tasksTypes";
 
-interface TasksState {
+interface ITasksState {
   tasks: ITask[];
   searchQuery: string;
 }
 
-const initialState: TasksState = {
+const initialState: ITasksState = {
   tasks: JSON.parse(localStorage.getItem("tasks") || "[]"),
   searchQuery: "",
 };
@@ -43,7 +44,7 @@ const updateComments = (
 const tasksReducer = (
   state = initialState,
   action: TasksActionTypes
-): TasksState => {
+): ITasksState => {
   switch (action.type) {
     case ADD_TASK:
       const newTasks = [...state.tasks, action.payload];
@@ -83,6 +84,22 @@ const tasksReducer = (
         return {
           ...task,
           comments: [...task.comments, comment],
+        };
+      });
+
+      localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+      return { ...state, tasks: updatedTasks };
+    }
+
+    case "EDIT_COMMENT": {
+      const { taskId, commentId, newText } = action.payload;
+
+      const updatedTasks = state.tasks.map((task) => {
+        if (task.id !== taskId) return task;
+
+        return {
+          ...task,
+          comments: updateComments(task.comments, commentId, { text: newText }),
         };
       });
 

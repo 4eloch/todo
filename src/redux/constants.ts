@@ -2,6 +2,7 @@ export const ADD_TASK = "ADD_TASK";
 export const EDIT_TASK = "EDIT_TASK";
 export const DELETE_TASK = "DELETE_TASK";
 export const ADD_COMMENT = "ADD_COMMENT";
+export const EDIT_COMMENT = "EDIT_COMMENT";
 export const DELETE_COMMENT = "DELETE_COMMENT";
 export const TOGGLE_TASK_COMPLETION = "TOGGLE_TASK_COMPLETION";
 export const UPDATE_TASK_TIME = "UPDATE_TASK_TIME";

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { editTask } from "../../redux/actions/tasksActions";
+import { editComment } from "../../redux/actions";
 import {
   TasksActionTypes,
   IComment,
@@ -48,17 +48,7 @@ const EditCommentModal: React.FC<EditCommentModalProps> = ({
       return;
     }
 
-    const updatedTasks = tasks.map((task: ITask) => {
-      if (task.id !== taskId) return task;
-
-      const updatedComments = task.comments.map((comment: IComment) =>
-        comment.id === commentId ? { ...comment, text: commentText } : comment
-      );
-
-      return { ...task, comments: updatedComments };
-    });
-
-    dispatch({ type: "EDIT_TASK", payload: updatedTasks[0] }); // Обновляем задачу в Redux
+    dispatch(editComment(taskId, commentId, commentText)); // Обновляем задачу в Redux
     onHide(); // Закрываем модальное окно
   };
 

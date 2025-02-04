@@ -7,6 +7,7 @@ import {
   TOGGLE_TASK_COMPLETION,
   UPDATE_TASK_TIME,
   SET_SEARCH_QUERY,
+  EDIT_COMMENT,
 } from "../constants";
 
 export interface ITask {
@@ -51,6 +52,15 @@ export interface IAddCommentAction {
   payload: { taskId: number; parentId?: number; comment: IComment };
 }
 
+export interface EditCommentAction {
+  type: typeof EDIT_COMMENT;
+  payload: {
+    taskId: number;
+    commentId: number;
+    newText: string;
+  };
+}
+
 export interface IDeleteCommentAction {
   type: typeof DELETE_COMMENT;
   payload: {
@@ -84,6 +94,7 @@ export type TasksActionTypes =
   | IAddTaskAction
   | IEditTaskAction
   | IDeleteTaskAction
+  | EditCommentAction
   | IAddCommentAction
   | IDeleteCommentAction
   | ISetSearchQueryAction

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { useDispatch } from "react-redux";
-import { addComment } from "../../redux/actions/tasksActions";
+import { addComment } from "../../redux/actions";
 import { TasksActionTypes, IComment } from "../../redux/types/tasksTypes";
 import { Dispatch } from "redux";
 

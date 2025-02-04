@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import EditCommentModal from "../modals/EditCommentModal";
-import { deleteComment } from "../../redux/actions/tasksActions";
+import { deleteComment } from "../../redux/actions";
 import { TasksActionTypes, IComment } from "../../redux/types/tasksTypes";
 import { Dispatch } from "redux";
 

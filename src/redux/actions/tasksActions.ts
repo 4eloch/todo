@@ -2,8 +2,6 @@ import {
   ADD_TASK,
   EDIT_TASK,
   DELETE_TASK,
-  DELETE_COMMENT,
-  ADD_COMMENT,
   SET_SEARCH_QUERY,
   TOGGLE_TASK_COMPLETION,
   UPDATE_TASK_TIME,
@@ -13,7 +11,6 @@ import {
   IAddTaskAction,
   IEditTaskAction,
   IDeleteTaskAction,
-  IComment,
 } from "../types/tasksTypes";
 
 // Создание новой задачи
@@ -32,30 +29,6 @@ export const editTask = (task: ITask): IEditTaskAction => ({
 export const deleteTask = (taskId: number): IDeleteTaskAction => ({
   type: DELETE_TASK,
   payload: taskId,
-});
-
-// Добавление комментария к задаче
-export const addComment = (
-  taskId: number,
-  comment: IComment,
-  parentId?: number
-): {
-  type: typeof ADD_COMMENT;
-  payload: { taskId: number; parentId?: number; comment: IComment };
-} => ({
-  type: ADD_COMMENT,
-  payload: { taskId, parentId, comment },
-});
-
-export const deleteComment = (
-  taskId: number,
-  commentId: number
-): {
-  type: typeof DELETE_COMMENT;
-  payload: { taskId: number; commentId: number };
-} => ({
-  type: DELETE_COMMENT,
-  payload: { taskId, commentId },
 });
 
 export const setSearchQuery = (
