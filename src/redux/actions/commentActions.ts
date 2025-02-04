@@ -10,7 +10,7 @@ export const addComment = (
   payload: { taskId: number; parentId?: number; comment: IComment };
 } => ({
   type: ADD_COMMENT,
-  payload: { taskId, parentId, comment },
+  payload: { taskId, comment, parentId },
 });
 
 export const editComment = (

@@ -1,8 +1,7 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import "../../styles/projectsStyles.scss";
 
-const ProjectsPage: React.FC = () => (
+const ProjectsPage = () => (
   <div className="projects-page">
     <h1 className="projects-title">Проекты</h1>
     <ul className="projects-list">

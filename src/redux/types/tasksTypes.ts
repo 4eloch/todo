@@ -52,7 +52,7 @@ export interface IAddCommentAction {
   payload: { taskId: number; parentId?: number; comment: IComment };
 }
 
-export interface EditCommentAction {
+export interface IEditCommentAction {
   type: typeof EDIT_COMMENT;
   payload: {
     taskId: number;
@@ -94,7 +94,7 @@ export type TasksActionTypes =
   | IAddTaskAction
   | IEditTaskAction
   | IDeleteTaskAction
-  | EditCommentAction
+  | IEditCommentAction
   | IAddCommentAction
   | IDeleteCommentAction
   | ISetSearchQueryAction

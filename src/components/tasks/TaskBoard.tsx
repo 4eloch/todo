@@ -1,36 +1,31 @@
-// src/components/tasks/TaskBoard.tsx
 import React from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import TaskColumn from "./TaskColumn";
 import { useSelector, useDispatch } from "react-redux";
-import AddTaskModal from "../modals/AddTaskModal";
-//@ts-ignore
-import { setSearchQuery, Task } from "../../redux/actions/tasksActions";
+import AddTaskModal from "../modals/AddTask";
+import { ITask } from "../../redux/types/tasksTypes";
 import { Dispatch } from "redux";
 
-const TaskBoard: React.FC = () => {
+const TaskBoard = () => {
   const dispatch = useDispatch<Dispatch<any>>();
   const tasks = useSelector((state: any) => state.tasks.tasks);
-  const searchQuery = useSelector((state: any) => state.tasks.searchQuery); // Получаем запрос из Redux
+  const searchQuery = useSelector((state: any) => state.tasks.searchQuery);
 
-  // Фильтрация задач по номеру (id) или заголовку (title)
   const filteredTasks = tasks.filter(
-    (task: Task) =>
+    (task: ITask) =>
       String(task.id).includes(searchQuery) ||
       task.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Разделение задач по статусам после фильтрации
   const columns = {
-    Queue: filteredTasks.filter((task: Task) => task.status === "Queue"),
+    Queue: filteredTasks.filter((task: ITask) => task.status === "Queue"),
     Development: filteredTasks.filter(
-      (task: Task) => task.status === "Development"
+      (task: ITask) => task.status === "Development"
     ),
-    Done: filteredTasks.filter((task: Task) => task.status === "Done"),
+    Done: filteredTasks.filter((task: ITask) => task.status === "Done"),
   };
 
-  // Состояние модального окна для добавления задачи
   const [showAddTaskModal, setShowAddTaskModal] = React.useState(false);
 
   const handleAddTask = () => {
@@ -60,7 +55,6 @@ const TaskBoard: React.FC = () => {
           filteredTasks={filteredTasks}
         />
 
-        {/* Модальное окно для добавления задачи */}
         <AddTaskModal
           show={showAddTaskModal}
           onHide={handleCloseAddTaskModal}

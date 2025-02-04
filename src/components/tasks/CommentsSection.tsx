@@ -1,11 +1,10 @@
-import React from "react";
 import { IComment } from "../../redux/types/tasksTypes";
 
-interface CommentsSectionProps {
+interface ICommentsSectionProps {
   comments: IComment[];
 }
 
-const CommentsSection: React.FC<CommentsSectionProps> = ({ comments }) => {
+const CommentsSection = ({ comments }: ICommentsSectionProps) => {
   const renderComments = (comments: IComment[], depth = 0) => {
     return comments.map((comment) => (
       <div key={comment.id} style={{ marginLeft: `${depth * 20}px` }}>

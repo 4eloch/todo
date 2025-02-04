@@ -91,7 +91,7 @@ const tasksReducer = (
       return { ...state, tasks: updatedTasks };
     }
 
-    case "EDIT_COMMENT": {
+    case EDIT_COMMENT: {
       const { taskId, commentId, newText } = action.payload;
 
       const updatedTasks = state.tasks.map((task) => {

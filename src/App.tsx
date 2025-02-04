@@ -1,4 +1,3 @@
-import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import ProjectsPage from "./components/pages/ProjectsPage";
@@ -8,7 +7,7 @@ import "./styles/projectsStyles.scss";
 import "./styles/formStyles.scss";
 import "./styles/globalStyles.scss";
 
-const App: React.FC = () => (
+const App = () => (
   <HelmetProvider>
     <Router>
       <Routes>

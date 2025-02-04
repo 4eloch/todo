@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useDrag } from "react-dnd";
 import { useDispatch } from "react-redux";
-import EditTaskModal from "../modals/EditTaskModal";
-import AddCommentModal from "../modals/AddCommentModal";
+import EditTask from "../modals/EditTask";
+import AddCommentModal from "../modals/AddComment";
 import NestedCommentsSection from "./NestedCommentsSection";
 import { FaEdit, FaTrash, FaPaperclip } from "react-icons/fa";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
@@ -14,14 +14,13 @@ import {
 import { TasksActionTypes, ITask } from "../../redux/types/tasksTypes";
 import { Dispatch } from "redux";
 
-interface TaskCardProps {
+interface ITaskCardProps {
   task: ITask;
 }
 
-const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
+const TaskCard = ({ task }: ITaskCardProps) => {
   const dispatch = useDispatch<Dispatch<TasksActionTypes>>();
 
-  // Настройка drag-and-drop
   const [{ isDragging }, drag] = useDrag({
     type: "TASK",
     item: { id: task.id },
@@ -33,11 +32,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   const [showEditModal, setShowEditModal] = React.useState(false);
   const [showAddCommentModal, setShowAddCommentModal] = React.useState(false);
   const [localTimeSpent, setLocalTimeSpent] = useState(task.timeSpent);
-
-  // Состояние для списка прикреплённых файлов
-  const [files, setFiles] = React.useState<File[]>(
-    task.files.map((file: any) => new File([], file))
-  );
 
   const handleEdit = () => {
     setShowEditModal(true);
@@ -61,7 +55,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
     }
   };
 
-  // Функция для обработки выбора файлов
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const newFiles = Array.from(e.target.files).map((file) =>
@@ -69,27 +62,24 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
       );
       const updatedTask: ITask = {
         ...task,
-        files: [...task.files, ...newFiles], // Добавляем новые файлы к существующим
+        files: [...task.files, ...newFiles],
       };
-      dispatch({ type: "EDIT_TASK", payload: updatedTask }); // Обновляем задачу в Redux
+      dispatch({ type: "EDIT_TASK", payload: updatedTask });
     }
   };
 
-  // Функция для удаления файла
   const handleFileRemove = (index: number) => {
     const updatedTask: ITask = {
       ...task,
-      files: task.files.filter((_: any, i: any) => i !== index), // Удаляем файл по индексу
+      files: task.files.filter((_: any, i: any) => i !== index),
     };
-    dispatch({ type: "EDIT_TASK", payload: updatedTask }); // Обновляем задачу в Redux
+    dispatch({ type: "EDIT_TASK", payload: updatedTask });
   };
 
-  // Функция для отметки задачи как выполненной или нет
   const handleToggleCompletion = () => {
-    dispatch(toggleTaskCompletion(task.id, !task.isCompleted)); // Переключаем состояние выполнения
+    dispatch(toggleTaskCompletion(task.id, !task.isCompleted));
   };
 
-  // Форматирование времени в HH:MM:SS
   const formatTimeSpent = (seconds: number): string => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
@@ -97,19 +87,16 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
     return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
   };
 
-  // Таймер для задачи в статусе Development
   useEffect(() => {
     let timer: NodeJS.Timeout | undefined;
 
     if (task.status === "Development") {
-      // Запускаем таймер, если задача в статусе Development
       timer = setInterval(() => {
-        setLocalTimeSpent((prevTime: number) => prevTime + 1); // Увеличиваем время на 1 секунду
-        dispatch(updateTaskTime(task.id, localTimeSpent + 1)); // Обновляем время в Redux
+        setLocalTimeSpent((prevTime: number) => prevTime + 1);
+        dispatch(updateTaskTime(task.id, localTimeSpent + 1));
       }, 1000);
     }
 
-    // Очищаем таймер при изменении статуса или выходе из компонента
     return () => {
       if (timer) clearInterval(timer);
     };
@@ -117,25 +104,19 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
 
   return (
     <div ref={drag} className={`task-card ${isDragging ? "dragging" : ""}`}>
-      {/* Блок с номером задачи, датой создания и временем в работе */}
       <div className="task-info-container" onClick={(e) => e.stopPropagation()}>
-        {/* Номер задачи */}
         <span
           className="task-number"
           style={{ fontWeight: "bold", marginRight: "10px" }}
         >
           #{task.id}
         </span>
-
-        {/* Дата создания */}
         <span
           className="task-created-at"
           style={{ color: "#6c757d", fontSize: "0.9em", marginRight: "10px" }}
         >
           Создана: {new Date(task.createdAt).toLocaleDateString()}
         </span>
-
-        {/* Время в работе */}
         <span
           className="task-time-spent"
           style={{ color: "#6c757d", fontSize: "0.9em" }}
@@ -143,14 +124,11 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
           Время в работе: {formatTimeSpent(task.timeSpent)}
         </span>
       </div>
-      {/* Верхняя часть карточки */}
       <div className="task-header">
-        {/* Блок с чекбоксом выполнения и названием задачи */}
         <div
           className="task-title-container"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Кнопка отметки задачи как выполненной */}
           <button
             className="toggle-completion-button"
             onClick={handleToggleCompletion}
@@ -174,25 +152,22 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
             }
           >
             {task.isCompleted && "✓"}{" "}
-            {/* Отображаем галочку, если задача выполнена */}
           </button>
 
-          {/* Название задачи рядом с чекбоксом */}
           <h3
             className="task-title"
             style={{
               textDecoration: task.isCompleted ? "line-through" : "none",
               color: task.isCompleted ? "#6c757d" : "#333",
-              marginLeft: "10px", // Отступ от чекбокса
-              whiteSpace: "normal", // Разрешаем перенос текста
-              wordBreak: "break-word", // Перенос слов
+              marginLeft: "10px",
+              whiteSpace: "normal",
+              wordBreak: "break-word",
             }}
           >
             {task.title}
           </h3>
         </div>
         <div className="task-actions">
-          {/* Кнопка редактирования (карандаш) с tooltip */}
           <OverlayTrigger
             placement="top"
             overlay={<Tooltip id="edit-tooltip">Редактировать задачу</Tooltip>}
@@ -202,7 +177,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
             </button>
           </OverlayTrigger>
 
-          {/* Кнопка прикрепления файла (скрепка) с tooltip */}
           <OverlayTrigger
             placement="top"
             overlay={<Tooltip id="attach-tooltip">Прикрепить файл</Tooltip>}
@@ -222,7 +196,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
             onChange={handleFileUpload}
           />
 
-          {/* Кнопка удаления (мусорное ведро) с tooltip */}
           <OverlayTrigger
             placement="top"
             overlay={<Tooltip id="delete-tooltip">Удалить задачу</Tooltip>}
@@ -237,12 +210,10 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
         </div>
       </div>
 
-      {/* Основная информация о задаче */}
       <p>{task.description}</p>
       <p>Дата окончания: {task.dueDate}</p>
       <p>Приоритет: {task.priority}</p>
 
-      {/* Отображение прикреплённых файлов */}
       {task.files.length > 0 && (
         <div className="attached-files">
           <h4>Прикреплённые файлы:</h4>
@@ -252,7 +223,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
                 <div
                   style={{ display: "flex", alignItems: "center", gap: "10px" }}
                 >
-                  {/* Отображение файла */}
                   {fileUrl.includes("image") ? (
                     <img
                       src={fileUrl}
@@ -264,13 +234,11 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
                       {fileUrl.split("/").pop() || "Неизвестный файл"}
                     </a>
                   )}
-
-                  {/* Кнопка удаления файла (крестик) */}
                   <button
                     className="remove-file-button"
                     onClick={(e) => {
-                      e.stopPropagation(); // Предотвращаем клик на родительский элемент
-                      handleFileRemove(index); // Удаляем файл
+                      e.stopPropagation();
+                      handleFileRemove(index);
                     }}
                     title="Удалить файл"
                   >
@@ -282,17 +250,12 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
           </ul>
         </div>
       )}
-
-      {/* Кнопка добавления комментария */}
       <button onClick={handleAddComment} className="add-comment-button">
         Добавить комментарий
       </button>
 
-      {/* Секция комментариев */}
       <NestedCommentsSection comments={task.comments} taskId={task.id} />
-
-      {/* Модальные окна */}
-      <EditTaskModal
+      <EditTask
         show={showEditModal}
         onHide={handleCloseEditModal}
         taskId={task.id}

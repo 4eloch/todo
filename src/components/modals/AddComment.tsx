@@ -1,45 +1,46 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { editComment } from "../../redux/actions";
+import { addComment } from "../../redux/actions";
 import {
   TasksActionTypes,
-  IComment,
   ITask,
+  IComment,
 } from "../../redux/types/tasksTypes";
 import { Dispatch } from "redux";
 
-interface EditCommentModalProps {
+interface IAddCommentModalProps {
   show: boolean;
   onHide: () => void;
   taskId: number;
-  commentId: number;
+  parentId?: number;
 }
 
-const EditCommentModal: React.FC<EditCommentModalProps> = ({
+const AddCommentModal = ({
   show,
   onHide,
   taskId,
-  commentId,
-}) => {
+  parentId,
+}: IAddCommentModalProps) => {
   const dispatch = useDispatch<Dispatch<TasksActionTypes>>();
   const tasks = useSelector((state: any) => state.tasks.tasks);
   const task = tasks.find((t: ITask) => t.id === taskId);
-  const commentToEdit = task?.comments.find(
-    (c: IComment) => c.id === commentId
-  );
+  const [commentText, setCommentText] = useState("");
 
-  // Состояние для текста комментария
-  const [commentText, setCommentText] = useState(commentToEdit?.text || "");
+  const generateCommentId = (): number => {
+    const lastCommentId = task.comments.reduce(
+      (maxId: number, comment: IComment) => {
+        return Math.max(
+          maxId,
+          comment.id,
+          ...comment.replies.map((reply: IComment) => reply.id)
+        );
+      },
+      0
+    );
+    return lastCommentId + 1;
+  };
 
-  // Обновляем состояние при изменении задачи в Redux
-  useEffect(() => {
-    if (commentToEdit) {
-      setCommentText(commentToEdit.text);
-    }
-  }, [commentToEdit]);
-
-  // Функция отправки обновлённого комментария
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -48,19 +49,28 @@ const EditCommentModal: React.FC<EditCommentModalProps> = ({
       return;
     }
 
-    dispatch(editComment(taskId, commentId, commentText)); // Обновляем задачу в Redux
-    onHide(); // Закрываем модальное окно
+    const newComment: IComment = {
+      id: generateCommentId(),
+      text: commentText,
+      replies: [],
+    };
+
+    dispatch(addComment(taskId, newComment, parentId));
+    setCommentText("");
+    onHide();
   };
 
   return (
     <Modal show={show} onHide={onHide} backdrop="static" keyboard={false}>
       <Modal.Header closeButton>
-        <Modal.Title>Редактирование комментария</Modal.Title>
+        <Modal.Title>
+          {parentId ? "Добавить ответ" : "Добавить комментарий"}
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
-          <Form.Group controlId="formCommentText">
-            <Form.Label>Текст комментария</Form.Label>
+          <Form.Group controlId="formComment">
+            <Form.Label>Комментарий</Form.Label>
             <Form.Control
               as="textarea"
               rows={3}
@@ -78,4 +88,4 @@ const EditCommentModal: React.FC<EditCommentModalProps> = ({
   );
 };
 
-export default EditCommentModal;
+export default AddCommentModal;

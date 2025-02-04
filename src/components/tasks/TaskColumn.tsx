@@ -1,4 +1,3 @@
-import React from "react";
 import { useDrop } from "react-dnd";
 import TaskCard from "./TaskCard";
 import { editTask } from "../../redux/actions/tasksActions";
@@ -6,18 +5,15 @@ import { TasksActionTypes, ITask } from "../../redux/types/tasksTypes";
 import { Dispatch } from "redux";
 import { useDispatch } from "react-redux";
 
-interface TaskColumnProps {
+interface ITaskColumnProps {
   title: string;
   tasks: ITask[];
   filteredTasks: ITask[];
 }
 
-const TaskColumn: React.FC<TaskColumnProps> = ({
-  title,
-  tasks,
-  filteredTasks,
-}) => {
+const TaskColumn = ({ title, tasks, filteredTasks }: ITaskColumnProps) => {
   const dispatch = useDispatch<Dispatch<TasksActionTypes>>();
+
   const [{ isOver }, drop] = useDrop({
     accept: "TASK",
     drop: (item: any) => {
@@ -25,9 +21,12 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
 
       if (!taskToUpdate) return;
 
+      const newIsCompleted = title === "Done";
+
       const updatedTask: ITask = {
         ...taskToUpdate,
         status: title,
+        isCompleted: newIsCompleted,
       };
 
       dispatch(editTask(updatedTask));

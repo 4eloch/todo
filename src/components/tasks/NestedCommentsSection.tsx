@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import AddCommentModal from "../modals/AddCommentModal";
+import AddCommentModal from "../modals/AddComment";
 import CommentCard from "./CommentCard";
 import { useDispatch } from "react-redux";
 import { TasksActionTypes, IComment } from "../../redux/types/tasksTypes";
@@ -11,85 +11,59 @@ interface NestedCommentsProps {
   taskId: number;
 }
 
-const NestedCommentsSection: React.FC<NestedCommentsProps> = ({
-  comments,
-  taskId,
-}) => {
+const NestedCommentsSection = ({ comments, taskId }: NestedCommentsProps) => {
   const dispatch = useDispatch<Dispatch<TasksActionTypes>>();
 
-  // Состояние для отслеживания разворачиваемых комментариев
   const [expandedComments, setExpandedComments] = useState<number[]>([]);
   const [showReplyModal, setShowReplyModal] = React.useState(false);
   const [parentId, setParentId] = React.useState<number | undefined>(undefined);
 
-  // Функция для обработки клика на "Ответить"
   const handleReply = (commentId: number) => {
-    setParentId(commentId); // Устанавливаем ID родительского комментария
-    setShowReplyModal(true); // Показываем модальное окно
+    setParentId(commentId);
+    setShowReplyModal(true);
   };
 
-  // Функция для закрытия модального окна ответа
   const handleCloseReplyModal = () => {
     setShowReplyModal(false);
-    setParentId(undefined); // Сбрасываем ID родительского комментария
+    setParentId(undefined);
   };
 
-  // Функция для переключения состояния "развёрнут/свёрнут" для комментария
   const toggleExpand = (commentId: number) => {
-    setExpandedComments(
-      (prev) =>
-        prev.includes(commentId)
-          ? prev.filter((id) => id !== commentId) // Скрываем
-          : [...prev, commentId] // Разворачиваем
+    setExpandedComments((prev) =>
+      prev.includes(commentId)
+        ? prev.filter((id) => id !== commentId)
+        : [...prev, commentId]
     );
   };
 
-  // Рекурсивное отображение комментариев
   const renderComments = (comments: IComment[], depth = 0) => {
     const styled = { marginLeft: `${depth === 0 ? 0 : depth + 20}px` };
 
     return comments.map((comment) => (
       <div key={comment.id} style={styled}>
-        <CommentCard comment={comment} taskId={taskId} />
+        <CommentCard
+          comment={comment}
+          taskId={taskId}
+          onReply={handleReply}
+          onToggleExpand={toggleExpand}
+          isExpanded={expandedComments.includes(comment.id)}
+        />
 
-        {/* Кнопка для добавления ответа */}
-        {!comment.isDeleted && (
-          <button
-            className="reply-comment-button"
-            onClick={() => handleReply(comment.id)}
-            style={{
-              marginLeft: `${depth * 20}px`,
-              marginTop: "5px",
-              padding: "5px 10px",
-              background: "#28a745",
-              color: "#fff",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-              transition: "background-color 0.2s ease",
-            }}
-          >
-            Ответить
-          </button>
-        )}
-
-        {/* Рекурсивное отображение ответов, если они развернуты */}
-        {renderComments(comment.replies, depth + 1)}
+        {expandedComments.includes(comment.id) &&
+          renderComments(comment.replies, depth + 1)}
       </div>
     ));
   };
 
   return (
     <div>
-      {/* Список комментариев */}
       {renderComments(comments)}
 
-      {/* Модальное окно для добавления комментария или ответа */}
       <AddCommentModal
         show={showReplyModal}
         onHide={handleCloseReplyModal}
         taskId={taskId}
-        parentId={parentId} // Передаём ID родительского комментария (если есть)
+        parentId={parentId}
       />
     </div>
   );

@@ -12,11 +12,7 @@ interface EditTaskModalProps {
   taskId: number;
 }
 
-const EditTaskModal: React.FC<EditTaskModalProps> = ({
-  show,
-  onHide,
-  taskId,
-}) => {
+const EditTaskModal = ({ show, onHide, taskId }: EditTaskModalProps) => {
   const dispatch = useDispatch<Dispatch<TasksActionTypes>>();
   const tasks = useSelector((state: any) => state.tasks.tasks);
   const taskToEdit = tasks.find((task: ITask) => task.id === taskId);
@@ -25,9 +21,6 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [priority, setPriority] = useState("");
-  const [isCompleted, setIsCompleted] = useState(
-    taskToEdit?.isCompleted || false
-  );
 
   useEffect(() => {
     if (taskToEdit) {

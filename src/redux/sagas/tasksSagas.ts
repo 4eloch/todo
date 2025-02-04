@@ -13,22 +13,18 @@ import {
 } from "../constants";
 
 function* addTaskSaga(action: TasksActionTypes) {
-  // Логика добавления задачи
   yield put({ type: TASK_ADDED, payload: action.payload });
 }
 
 function* editTaskSaga(action: TasksActionTypes) {
-  // Логика редактирования задачи
   yield put({ type: TASK_EDITED, payload: action.payload });
 }
 
 function* deleteTaskSaga(action: TasksActionTypes) {
-  // Логика удаления задачи
   yield put({ type: TASK_DELETED, payload: action.payload });
 }
 
 function* addCommentSaga(action: TasksActionTypes) {
-  // Логика добавления комментария
   yield put({ type: COMMENT_ADDED, payload: action.payload });
 }
 

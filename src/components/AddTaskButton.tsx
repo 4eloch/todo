@@ -1,9 +1,9 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { Dispatch } from "redux";
-import AddTaskModal from "./modals/AddTaskModal";
+import AddTaskModal from "./modals/AddTask";
 
-const AddTaskButton: React.FC = () => {
+const AddTaskButton = () => {
   const dispatch = useDispatch<Dispatch<any>>();
   const [showAddTaskModal, setShowAddTaskModal] = React.useState(false);
 
@@ -20,7 +20,6 @@ const AddTaskButton: React.FC = () => {
       <button className="add-task-button" onClick={handleAddTask}>
         Добавить задачу
       </button>
-      {/* Модальное окно для добавления задачи */}
       <AddTaskModal show={showAddTaskModal} onHide={handleCloseAddTaskModal} />
     </>
   );

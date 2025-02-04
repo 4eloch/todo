@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { useDispatch } from "react-redux";
-//@ts-ignore
-import { addTask, Task } from "../../redux/actions/tasksActions";
+import { ITask } from "../../redux/types/tasksTypes";
+import { addTask } from "../../redux/actions/tasksActions";
 import { Dispatch } from "redux";
 import "../../styles/formStyles.scss";
 
@@ -11,7 +11,7 @@ interface AddTaskModalProps {
   onHide: () => void;
 }
 
-const AddTaskModal: React.FC<AddTaskModalProps> = ({ show, onHide }) => {
+const AddTaskModal = ({ show, onHide }: AddTaskModalProps) => {
   const dispatch = useDispatch<Dispatch<any>>();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -20,7 +20,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ show, onHide }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const newTask: Task = {
+    const newTask: ITask = {
       id: Date.now(),
       title,
       description,
@@ -32,6 +32,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ show, onHide }) => {
       status: "Queue",
       subtasks: [],
       comments: [],
+      isCompleted: false,
     };
     dispatch(addTask(newTask));
     onHide();
