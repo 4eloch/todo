@@ -1,12 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { addComment } from "../../redux/actions";
-import {
-  TasksActionTypes,
-  ITask,
-  IComment,
-} from "../../redux/types/tasksTypes";
+import { TasksActionTypes, ITask, IComment } from "../../redux/types/tasksTypes";
 import { Dispatch } from "redux";
 
 interface IAddCommentProps {
@@ -16,30 +12,15 @@ interface IAddCommentProps {
   parentId?: number;
 }
 
-const AddComment = ({
-  isShown,
-  onHide,
-  taskId,
-  parentId,
-}: IAddCommentProps) => {
+const AddComment = ({ isShown, onHide, taskId, parentId }: IAddCommentProps) => {
   const dispatch = useDispatch<Dispatch<TasksActionTypes>>();
-  const tasks = useSelector((state: any) => state.tasks.tasks);
-  const task = tasks.find((t: ITask) => t.id === taskId);
+  const projectId = useSelector((state: any) => state.currentProjectId);
+  const tasks = useSelector((state: any) => state.projects);
+  useEffect(() => {
+    console.log(projectId);
+  }, []);
+  const task = tasks?.find((t: ITask) => t.id === taskId);
   const [commentText, setCommentText] = useState("");
-
-  const generateCommentId = (): number => {
-    const lastCommentId = task.comments.reduce(
-      (maxId: number, comment: IComment) => {
-        return Math.max(
-          maxId,
-          comment.id,
-          ...comment.replies.map((reply: IComment) => reply.id)
-        );
-      },
-      0
-    );
-    return lastCommentId + 1;
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,7 +30,7 @@ const AddComment = ({
     }
 
     const newComment: IComment = {
-      id: generateCommentId(),
+      id: Date.now(),
       text: commentText,
       replies: [],
     };
@@ -61,9 +42,7 @@ const AddComment = ({
   return (
     <Modal show={isShown} onHide={onHide} backdrop="static" keyboard={false}>
       <Modal.Header closeButton>
-        <Modal.Title>
-          {parentId ? "Добавить ответ" : "Добавить комментарий"}
-        </Modal.Title>
+        <Modal.Title>{parentId ? "Добавить ответ" : "Добавить комментарий"}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>

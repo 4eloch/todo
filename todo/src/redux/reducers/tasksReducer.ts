@@ -10,19 +10,22 @@ import {
   UPDATE_TASK_TIME,
   ADD_PROJECT,
   DELETE_PROJECT,
+  SET_CURRENT_PROJECT,
 } from "../constants";
-import { TasksActionTypes, ITask, IComment } from "../types/tasksTypes";
+import { TasksActionTypes, ITask, IComment, IProject } from "../types/tasksTypes";
 
 interface ITasksState {
-  projects: any;
   tasks: ITask[];
+  projects: IProject[];
   searchQuery: string;
+  currentProjectId: number | null;
 }
 
 const initialState: ITasksState = {
-  tasks: JSON.parse(localStorage.getItem("tasks") || "[]"),
+  tasks: [],
+  projects: JSON.parse(localStorage.getItem("projects") || "[]"),
   searchQuery: "",
-  projects: undefined,
+  currentProjectId: null,
 };
 
 const updateComments = (
@@ -38,91 +41,174 @@ const updateComments = (
       return { ...comment, isDeleted: true };
     }
 
+    const updatedReplies =
+      comment.replies && Array.isArray(comment.replies)
+        ? updateComments(comment.replies, commentId, newComment)
+        : [];
+
     return {
       ...comment,
-      replies: updateComments(comment.replies, commentId, newComment),
+      replies: updatedReplies,
     };
   });
 };
 
-const tasksReducer = (
-  state = initialState,
-  action: TasksActionTypes
-): ITasksState => {
+const tasksReducer = (state = initialState, action: TasksActionTypes): ITasksState => {
   switch (action.type) {
-    case ADD_TASK:
-      const newTasks = [...state.tasks, action.payload];
-      localStorage.setItem("tasks", JSON.stringify(newTasks));
-      return { ...state, tasks: newTasks };
+    case ADD_TASK: {
+      const projectIndex = state.currentProjectId;
+      if (projectIndex === null) return state;
 
-    case EDIT_TASK: {
-      const updatedTasks = state.tasks.map((task) =>
-        task.id === action.payload.id ? action.payload : task
-      );
-      localStorage.setItem("tasks", JSON.stringify(updatedTasks));
-      return { ...state, tasks: updatedTasks };
-    }
+      const newTask: ITask = {
+        ...action.payload,
+        id: Date.now(),
+        projectId: projectIndex,
+      };
 
-    case DELETE_TASK:
-      const filteredTasks = state.tasks.filter(
-        (task) => task.id !== action.payload
-      );
-      localStorage.setItem("tasks", JSON.stringify(filteredTasks));
-      return { ...state, tasks: filteredTasks };
-
-    case ADD_COMMENT: {
-      const { taskId, parentId, comment } = action.payload;
-
-      const updatedTasks = state.tasks.map((task) => {
-        if (task.id !== taskId) return task;
-
-        if (parentId) {
-          return {
-            ...task,
-            comments: updateComments(task.comments, parentId, comment),
-          };
-        }
+      const updatedProjects = state.projects?.map((project) => {
+        if (project.id !== projectIndex) return project;
 
         return {
-          ...task,
-          comments: [...task.comments, comment],
+          ...project,
+          tasks: [...project.tasks, newTask],
+        };
+      });
+      localStorage.setItem("projects", JSON.stringify(updatedProjects));
+      return { ...state, projects: updatedProjects };
+    }
+
+    case EDIT_TASK: {
+      const currentProjectId = state.currentProjectId;
+      if (currentProjectId === null) return state; // Important check
+
+      const updatedProjects = state.projects?.map((project) => {
+        if (project.id !== currentProjectId) return project;
+
+        if (!project.tasks) {
+          console.error("Error: project.tasks is undefined for project:", project);
+          return project;
+        }
+
+        const updatedTasks = project.tasks?.map((task) =>
+          task.id === action.payload.id ? action.payload : task
+        );
+
+        return {
+          ...project,
+          tasks: updatedTasks,
         };
       });
 
-      localStorage.setItem("tasks", JSON.stringify(updatedTasks));
-      return { ...state, tasks: updatedTasks };
+      localStorage.setItem("projects", JSON.stringify(updatedProjects));
+      return { ...state, projects: updatedProjects };
+    }
+
+    case DELETE_TASK: {
+      const taskId = action.payload;
+      const currentProjectId = state.currentProjectId;
+
+      if (currentProjectId === null) return state;
+
+      const updatedProjects = state.projects?.map((project) => {
+        if (project.id !== currentProjectId) return project;
+
+        const filteredTasks = project.tasks.filter((task) => task.id !== taskId);
+
+        return {
+          ...project,
+          tasks: filteredTasks,
+        };
+      });
+
+      localStorage.setItem("projects", JSON.stringify(updatedProjects));
+      return { ...state, projects: updatedProjects };
+    }
+
+    case ADD_COMMENT: {
+      const { taskId, parentId, comment } = action.payload;
+      const projectIndex = state.projects.findIndex((p) => p.tasks.some((t) => t.id === taskId));
+      if (projectIndex === -1) return state;
+
+      const updatedProjects = state.projects.map((project, index) => {
+        if (index !== projectIndex) return project;
+
+        const updateComments = (comments: IComment[], commentId?: number): IComment[] => {
+          return comments.map((c) => {
+            if (commentId && c.id === commentId) {
+              return {
+                ...c,
+                replies: [...c.replies, comment],
+              };
+            }
+            return {
+              ...c,
+              replies: updateComments(c.replies, parentId),
+            };
+          });
+        };
+
+        const updatedTasks = project.tasks.map((task) => {
+          if (task.id !== taskId) return task;
+
+          return {
+            ...task,
+            comments: parentId
+              ? updateComments(task.comments, parentId)
+              : [...task.comments, comment],
+          };
+        });
+
+        return {
+          ...project,
+          tasks: updatedTasks,
+        };
+      });
+
+      localStorage.setItem("projects", JSON.stringify(updatedProjects));
+      return { ...state, projects: updatedProjects };
     }
 
     case EDIT_COMMENT: {
       const { taskId, commentId, newText } = action.payload;
+      const currentProjectId = state.currentProjectId;
 
-      const updatedTasks = state.tasks.map((task) => {
-        if (task.id !== taskId) return task;
+      if (currentProjectId === null) return state;
 
-        return {
-          ...task,
-          comments: updateComments(task.comments, commentId, { text: newText }),
-        };
+      const updatedProjects = state.projects.map((project) => {
+        if (project.id !== currentProjectId) return project;
+
+        const updatedTasks = project.tasks.map((task) => {
+          if (task.id !== taskId) return task;
+
+          const updatedComments = updateComments(task.comments, commentId, { text: newText });
+          return { ...task, comments: updatedComments };
+        });
+        return { ...project, tasks: updatedTasks };
       });
 
-      localStorage.setItem("tasks", JSON.stringify(updatedTasks));
-      return { ...state, tasks: updatedTasks };
+      localStorage.setItem("tasks", JSON.stringify(updatedProjects));
+      return { ...state, projects: updatedProjects };
     }
 
     case DELETE_COMMENT: {
       const { taskId, commentId } = action.payload;
+      const currentProjectId = state.currentProjectId;
 
-      const updatedTasks = state.tasks.map((task) => {
-        if (task.id !== taskId) return task;
+      const updatedProjects = state.projects.map((project) => {
+        if (project.id !== currentProjectId) return project;
 
-        return {
-          ...task,
-          comments: updateComments(task.comments, commentId),
-        };
+        const updatedTasks = project.tasks.map((task) => {
+          if (task.id !== taskId) return task;
+
+          const updatedComments = updateComments(task.comments, commentId); // Use the global updateComments function
+          return { ...task, comments: updatedComments };
+        });
+
+        return { ...project, tasks: updatedTasks };
       });
 
-      localStorage.setItem("tasks", JSON.stringify(updatedTasks));
-      return { ...state, tasks: updatedTasks };
+      localStorage.setItem("projects", JSON.stringify(updatedProjects)); // Update "projects" in localStorage
+      return { ...state, projects: updatedProjects };
     }
 
     case SET_SEARCH_QUERY: {
@@ -131,8 +217,7 @@ const tasksReducer = (
 
     case TOGGLE_TASK_COMPLETION: {
       const { taskId, isCompleted } = action.payload;
-
-      const updatedTasks = state.tasks.map((task) => {
+      const updatedTasks = state.tasks?.map((task) => {
         if (task.id !== taskId) return task;
 
         const newStatus = isCompleted
@@ -154,8 +239,7 @@ const tasksReducer = (
 
     case UPDATE_TASK_TIME: {
       const { taskId, timeSpent } = action.payload;
-
-      const updatedTasks = state.tasks.map((task) =>
+      const updatedTasks = state.tasks?.map((task) =>
         task.id === taskId ? { ...task, timeSpent } : task
       );
 
@@ -164,17 +248,24 @@ const tasksReducer = (
     }
 
     case ADD_PROJECT: {
+      console.log(state.projects);
       const newProjects = [...state.projects, action.payload];
       localStorage.setItem("projects", JSON.stringify(newProjects));
       return { ...state, projects: newProjects };
     }
 
     case DELETE_PROJECT: {
+      console.log(state.projects);
       const filteredProjects = state.projects.filter(
         (project: any) => project.id !== action.payload
       );
       localStorage.setItem("projects", JSON.stringify(filteredProjects));
       return { ...state, projects: filteredProjects };
+    }
+
+    case SET_CURRENT_PROJECT: {
+      const projectId = action.payload;
+      return { ...state, currentProjectId: projectId };
     }
 
     default:

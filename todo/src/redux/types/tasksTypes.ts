@@ -10,10 +10,12 @@ import {
   SET_SEARCH_QUERY,
   ADD_PROJECT,
   DELETE_PROJECT,
+  SET_CURRENT_PROJECT,
 } from "../constants";
 
 export interface ITask {
   id: number;
+  projectId: number;
   title: string;
   description: string;
   createdAt: string;
@@ -108,6 +110,11 @@ export interface IDeleteProjectAction {
   payload: number;
 }
 
+export interface ISetCurrentProjectAction {
+  type: typeof SET_CURRENT_PROJECT;
+  payload: number;
+}
+
 export type TasksActionTypes =
   | IAddTaskAction
   | IEditTaskAction
@@ -119,4 +126,5 @@ export type TasksActionTypes =
   | IToggleTaskCompletionAction
   | IUpdateTaskTimeAction
   | IAddProjectAction
-  | IDeleteProjectAction;
+  | IDeleteProjectAction
+  | ISetCurrentProjectAction;

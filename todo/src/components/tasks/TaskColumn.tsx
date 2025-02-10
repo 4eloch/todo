@@ -36,9 +36,7 @@ const TaskColumn = ({ title, tasks, filteredTasks }: ITaskColumnProps) => {
   return (
     <div ref={drop} className={`task-column ${isOver ? "over" : ""}`}>
       <h2>{title}</h2>
-      {tasks.map((task) => (
-        <TaskCard key={task.id} task={task} />
-      ))}
+      {tasks?.map((task) => <TaskCard key={task.id} task={task} />)}
     </div>
   );
 };

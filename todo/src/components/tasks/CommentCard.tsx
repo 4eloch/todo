@@ -63,7 +63,6 @@ const CommentCard = ({
             className="edit-comment-button"
             onClick={handleEdit}
             style={{
-              color: "#007bff",
               textDecoration: "underline",
               cursor: "pointer",
               fontSize: "0.9em",
@@ -85,31 +84,37 @@ const CommentCard = ({
           </span>
         </div>
       )}
-
-      {comment.replies.length > 0 && (
-        <OverlayTrigger
-          placement="left"
-          overlay={
-            <Tooltip id="toggle-replies-tooltip">
-              Показать/скрыть ответы
-            </Tooltip>
-          }
-        >
-          <span
-            className="toggle-replies-button"
-            onClick={() => onToggleExpand(comment.id)}
-            style={{
-              color: isExpanded ? "#dc3545" : "#28a745",
-              textDecoration: "underline",
-              cursor: "pointer",
-              fontSize: "0.9em",
-            }}
-            title={isExpanded ? "Скрыть ответы" : "Показать ответы"}
+      <div>
+        {comment.replies.length > 0 && (
+          <OverlayTrigger
+            placement="left"
+            overlay={
+              <Tooltip id="toggle-replies-tooltip">
+                Показать/Скрыть ответы
+              </Tooltip>
+            }
           >
-            {isExpanded ? "скрыть ответы" : "показать ответы"}
-          </span>
-        </OverlayTrigger>
-      )}
+            <span
+              className="toggle-replies-button"
+              onClick={() => onToggleExpand(comment.id)}
+              style={{
+                border: "1px solid black",
+                padding: "0 10px",
+                verticalAlign: "middle",
+                height: "12px",
+                width: "12px",
+                borderRadius: "2px",
+                color: isExpanded ? "#dc3545" : "#28a745",
+                cursor: "pointer",
+                fontSize: "0.9em",
+              }}
+              title={isExpanded ? "Скрыть ответы" : "Показать ответы"}
+            >
+              {isExpanded ? "-" : "+"}
+            </span>
+          </OverlayTrigger>
+        )}
+      </div>
 
       <EditComment
         show={showEditModal}

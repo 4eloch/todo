@@ -7,11 +7,12 @@ import { Dispatch } from "redux";
 import "../../styles/formStyles.scss";
 
 interface IAddTaskProps {
-  show: boolean;
+  isShown: boolean;
   onHide: () => void;
+  projectId: number;
 }
 
-const AddTask = ({ show, onHide }: IAddTaskProps) => {
+const AddTask = ({ isShown, onHide, projectId }: IAddTaskProps) => {
   const dispatch = useDispatch<Dispatch<any>>();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -22,6 +23,7 @@ const AddTask = ({ show, onHide }: IAddTaskProps) => {
     e.preventDefault();
     const newTask: ITask = {
       id: Date.now(),
+      projectId: projectId,
       title,
       description,
       dueDate,
@@ -35,11 +37,15 @@ const AddTask = ({ show, onHide }: IAddTaskProps) => {
       isCompleted: false,
     };
     dispatch(addTask(newTask));
+    setTitle("");
+    setDescription("");
+    setDueDate("");
+    setPriority("Low");
     onHide();
   };
 
   return (
-    <Modal show={show} onHide={onHide} backdrop="static" keyboard={false}>
+    <Modal show={isShown} onHide={onHide} backdrop="static" keyboard={false}>
       <Modal.Header closeButton>
         <Modal.Title>Добавление задачи</Modal.Title>
       </Modal.Header>

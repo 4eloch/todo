@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDrag } from "react-dnd";
 import { useDispatch } from "react-redux";
 import EditTask from "../modals/EditTask";
@@ -10,6 +10,7 @@ import {
   deleteTask,
   toggleTaskCompletion,
   updateTaskTime,
+  editTask,
 } from "../../redux/actions/tasksActions";
 import { TasksActionTypes, ITask } from "../../redux/types/tasksTypes";
 import { Dispatch } from "redux";
@@ -20,6 +21,11 @@ interface ITaskCardProps {
 
 const TaskCard = ({ task }: ITaskCardProps) => {
   const dispatch = useDispatch<Dispatch<TasksActionTypes>>();
+  const [showEditModal, setShowEditModal] = React.useState(false);
+  const [showAddCommentModal, setShowAddCommentModal] = React.useState(false);
+  const [localTimeSpent, setLocalTimeSpent] = useState(task.timeSpent);
+  const [startTime, setStartTime] = useState<number | null>(null); // Store the timestamp when the timer starts
+  const timerRef = useRef<NodeJS.Timeout | null>(null); // useRef to store the timer
 
   const [{ isDragging }, drag] = useDrag({
     type: "TASK",
@@ -28,10 +34,6 @@ const TaskCard = ({ task }: ITaskCardProps) => {
       isDragging: !!monitor.isDragging(),
     }),
   });
-
-  const [showEditModal, setShowEditModal] = React.useState(false);
-  const [showAddCommentModal, setShowAddCommentModal] = React.useState(false);
-  const [localTimeSpent, setLocalTimeSpent] = useState(task.timeSpent);
 
   const handleEdit = () => {
     setShowEditModal(true);
@@ -49,7 +51,7 @@ const TaskCard = ({ task }: ITaskCardProps) => {
     setShowAddCommentModal(false);
   };
 
-  const handleDelete = (id: any) => {
+  const handleDelete = (id: number) => {
     if (window.confirm("Вы уверены, что хотите удалить эту задачу?")) {
       dispatch(deleteTask(task.id));
     }
@@ -57,14 +59,12 @@ const TaskCard = ({ task }: ITaskCardProps) => {
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const newFiles = Array.from(e.target.files).map((file) =>
-        URL.createObjectURL(file)
-      );
+      const newFiles = Array.from(e.target.files).map((file) => URL.createObjectURL(file));
       const updatedTask: ITask = {
         ...task,
         files: [...task.files, ...newFiles],
       };
-      dispatch({ type: "EDIT_TASK", payload: updatedTask });
+      dispatch(editTask(updatedTask));
     }
   };
 
@@ -73,7 +73,7 @@ const TaskCard = ({ task }: ITaskCardProps) => {
       ...task,
       files: task.files.filter((_: any, i: any) => i !== index),
     };
-    dispatch({ type: "EDIT_TASK", payload: updatedTask });
+    dispatch(editTask(updatedTask));
   };
 
   const handleToggleCompletion = () => {
@@ -102,6 +102,49 @@ const TaskCard = ({ task }: ITaskCardProps) => {
     };
   }, [task.status, localTimeSpent, dispatch]);
 
+  const calculateTimeSpent = (): number => {
+    if (!startTime) {
+      return task.timeSpent || 0; // Use the existing timeSpent if timer hasn't started
+    }
+    return task.timeSpent + Math.floor((Date.now() - startTime) / 1000); // Add elapsed time to initial timeSpent
+  };
+
+  useEffect(() => {
+    if (task.status === "Development" && !task.isCompleted) {
+      if (!startTime) {
+        setStartTime(Date.now());
+      }
+
+      if (!timerRef.current) {
+        timerRef.current = setInterval(() => {
+          dispatch(updateTaskTime(task.id, calculateTimeSpent()));
+        }, 1000);
+      }
+    } else if (task.status === "Done" && startTime) {
+      // Only reset if transitioning TO "Done" *from a timed state*
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+      setStartTime(null); // Reset startTime only when moving to "Done"
+      dispatch(updateTaskTime(task.id, calculateTimeSpent()));
+    } else {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    }
+
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, [task.status, task.isCompleted, dispatch, calculateTimeSpent]); // Correct dependencies
+
+  const taskCompleted = task.isCompleted ? "✓" : "";
+
   return (
     <div
       ref={drag}
@@ -110,10 +153,7 @@ const TaskCard = ({ task }: ITaskCardProps) => {
       }`}
     >
       <div className="task-info-container" onClick={(e) => e.stopPropagation()}>
-        <span
-          className="task-number"
-          style={{ fontWeight: "bold", marginRight: "10px" }}
-        >
+        <span className="task-number" style={{ fontWeight: "bold", marginRight: "10px" }}>
           #{task.id}
         </span>
         <span
@@ -122,18 +162,12 @@ const TaskCard = ({ task }: ITaskCardProps) => {
         >
           Создана: {new Date(task.createdAt).toLocaleDateString()}
         </span>
-        <span
-          className="task-time-spent"
-          style={{ color: "#6c757d", fontSize: "0.9em" }}
-        >
-          Время в работе: {formatTimeSpent(task.timeSpent)}
+        <span className="task-time-spent" style={{ color: "#6c757d", fontSize: "0.9em" }}>
+          Время в работе: {formatTimeSpent(calculateTimeSpent())}
         </span>
       </div>
       <div className="task-header">
-        <div
-          className="task-title-container"
-          onClick={(e) => e.stopPropagation()}
-        >
+        <div className="task-title-container" onClick={(e) => e.stopPropagation()}>
           <button
             className="toggle-completion-button"
             onClick={handleToggleCompletion}
@@ -150,13 +184,9 @@ const TaskCard = ({ task }: ITaskCardProps) => {
               cursor: "pointer",
               transition: "background-color 0.2s ease",
             }}
-            title={
-              task.isCompleted
-                ? "Снять отметку выполнения"
-                : "Отметить как выполненное"
-            }
+            title={task.isCompleted ? "Снять отметку выполнения" : "Отметить как выполненное"}
           >
-            {task.isCompleted && "✓"}{" "}
+            {taskCompleted}
           </button>
 
           <h3
@@ -186,10 +216,7 @@ const TaskCard = ({ task }: ITaskCardProps) => {
             placement="top"
             overlay={<Tooltip id="attach-tooltip">Прикрепить файл</Tooltip>}
           >
-            <label
-              className="attach-file-button"
-              htmlFor={`file-upload-${task.id}`}
-            >
+            <label className="attach-file-button" htmlFor={`file-upload-${task.id}`}>
               <FaPaperclip size={16} color="#17a2b8" />
             </label>
           </OverlayTrigger>
@@ -205,10 +232,7 @@ const TaskCard = ({ task }: ITaskCardProps) => {
             placement="top"
             overlay={<Tooltip id="delete-tooltip">Удалить задачу</Tooltip>}
           >
-            <button
-              className="delete-task-button"
-              onClick={() => handleDelete(task.id)}
-            >
+            <button className="delete-task-button" onClick={() => handleDelete(task.id)}>
               <FaTrash size={16} color="#dc3545" />
             </button>
           </OverlayTrigger>
@@ -225,9 +249,7 @@ const TaskCard = ({ task }: ITaskCardProps) => {
           <ul>
             {task.files.map((fileUrl: any, index: any) => (
               <li key={index} className="attached-file">
-                <div
-                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
-                >
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                   {fileUrl.includes("image") ? (
                     <img
                       src={fileUrl}
@@ -260,16 +282,11 @@ const TaskCard = ({ task }: ITaskCardProps) => {
       </button>
 
       <NestedCommentsSection comments={task.comments} taskId={task.id} />
-      <EditTask
-        isShown={showEditModal}
-        onHide={handleCloseEditModal}
-        taskId={task.id}
-      />
+      <EditTask isShown={showEditModal} onHide={handleCloseEditModal} taskId={task.id} />
       <AddComment
         isShown={showAddCommentModal}
         onHide={handleCloseAddCommentModal}
         taskId={task.id}
-        // parentId={parentId} - вот тут не находит parentId
       />
     </div>
   );

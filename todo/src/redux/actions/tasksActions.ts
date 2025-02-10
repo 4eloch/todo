@@ -5,12 +5,16 @@ import {
   SET_SEARCH_QUERY,
   TOGGLE_TASK_COMPLETION,
   UPDATE_TASK_TIME,
+  ADD_PROJECT,
+  DELETE_PROJECT,
+  SET_CURRENT_PROJECT,
 } from "../constants";
 import {
   ITask,
   IAddTaskAction,
   IEditTaskAction,
   IDeleteTaskAction,
+  IProject,
 } from "../types/tasksTypes";
 
 export const addTask = (task: ITask): IAddTaskAction => ({
@@ -55,4 +59,25 @@ export const updateTaskTime = (
 } => ({
   type: UPDATE_TASK_TIME,
   payload: { taskId, timeSpent },
+});
+
+export const addProject = (
+  project: IProject
+): { type: typeof ADD_PROJECT; payload: IProject } => ({
+  type: ADD_PROJECT,
+  payload: project,
+});
+
+export const deleteProject = (
+  projectId: number
+): { type: typeof DELETE_PROJECT; payload: number } => ({
+  type: DELETE_PROJECT,
+  payload: projectId,
+});
+
+export const setCurrentProject = (
+  projectId: number
+): { type: typeof SET_CURRENT_PROJECT; payload: number } => ({
+  type: SET_CURRENT_PROJECT,
+  payload: projectId,
 });

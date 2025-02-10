@@ -15,7 +15,7 @@ interface IEditTaskProps {
 const EditTask = ({ isShown, onHide, taskId }: IEditTaskProps) => {
   const dispatch = useDispatch<Dispatch<TasksActionTypes>>();
   const tasks = useSelector((state: any) => state.tasks.tasks);
-  const taskToEdit = tasks.find((task: ITask) => task.id === taskId);
+  const taskToEdit = tasks?.find((task: ITask) => task.id === taskId);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -35,6 +35,7 @@ const EditTask = ({ isShown, onHide, taskId }: IEditTaskProps) => {
     e.preventDefault();
     const updatedTask: ITask = {
       id: taskId,
+      projectId: taskToEdit?.projectId || 0,
       title,
       description,
       dueDate,
