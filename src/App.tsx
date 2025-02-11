@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { MainPage } from "./components/pages/MainPage";
 import { ProjectPage } from "./components/pages/ProjectPage";
-import "./styles/taskStyles.css";
+import "./styles/taskStyles.scss";
 import "./styles/projectsStyles.scss";
 import "./styles/formStyles.scss";
 import "./styles/globalStyles.scss";

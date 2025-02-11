@@ -9,14 +9,16 @@ import { OverlayTrigger, Tooltip } from "react-bootstrap";
 interface ICommentCardProps {
   comment: IComment;
   taskId: number;
+  projectId: number;
   onReply: (commentId: number) => void;
   onToggleExpand: (commentId: number) => void;
   isExpanded: boolean;
 }
 
-const CommentCard = ({
+export const CommentCard = ({
   comment,
   taskId,
+  projectId,
   onReply,
   onToggleExpand,
   isExpanded,
@@ -34,7 +36,7 @@ const CommentCard = ({
 
   const handleDeleteComment = () => {
     if (window.confirm("Вы уверены, что хотите удалить этот комментарий?")) {
-      dispatch(deleteComment(taskId, comment.id));
+      dispatch(deleteComment({ taskId, projectId, commentId: comment.id }));
     }
   };
 
@@ -118,11 +120,10 @@ const CommentCard = ({
       <EditComment
         isShown={showEditModal}
         onHide={handleCloseEditModal}
-        taskId={taskId}
+        projectId={projectId}
+        parentTaskId={taskId}
         commentId={comment.id}
       />
     </div>
   );
 };
-
-export default CommentCard;

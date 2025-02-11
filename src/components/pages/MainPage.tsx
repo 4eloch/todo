@@ -48,9 +48,6 @@ export const MainPage = () => {
   return (
     <div className="projects-page">
       <h1 className="projects-title">Проекты</h1>
-      <button className="add-project-button" onClick={handleAddProject}>
-        Добавить проект
-      </button>
       <ul className="projects-list">
         {projects.map((project: IProject) => (
           <li key={project.id} className="project-item">
@@ -68,6 +65,9 @@ export const MainPage = () => {
           </li>
         ))}
       </ul>
+      <button className="add-project-button" onClick={handleAddProject}>
+        Добавить проект
+      </button>
       <Modal
         show={showAddProjectModal}
         onHide={handleCloseAddProjectModal}
@@ -89,7 +89,7 @@ export const MainPage = () => {
               />
             </Form.Group>
             <br />
-            <Button variant="primary" type="submit">
+            <Button variant="primary" type="submit" style={{ width: "100%" }}>
               Сохранить
             </Button>
           </Form>

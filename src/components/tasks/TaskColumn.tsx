@@ -11,7 +11,7 @@ interface ITaskColumnProps {
   filteredTasks: ITask[];
 }
 
-const TaskColumn = ({ title, tasks, filteredTasks }: ITaskColumnProps) => {
+export const TaskColumn = ({ title, tasks, filteredTasks }: ITaskColumnProps) => {
   const dispatch = useDispatch<Dispatch<TasksActionTypes>>();
 
   const [{ isOver }, drop] = useDrop({
@@ -40,5 +40,3 @@ const TaskColumn = ({ title, tasks, filteredTasks }: ITaskColumnProps) => {
     </div>
   );
 };
-
-export default TaskColumn;

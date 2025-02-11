@@ -1,6 +1,6 @@
-import { useParams, useSearchParams } from "react-router-dom";
-import TaskBoard from "../tasks/TaskBoard";
-import SearchBar from "../SearchBar";
+import { useParams } from "react-router-dom";
+import { TaskBoard } from "../tasks/TaskBoard";
+import { SearchBar } from "../SearchBar";
 import { AddTaskButton } from "../AddTaskButton";
 import { useSelector } from "react-redux";
 import { TasksActionTypes, ITask } from "../../redux/types/tasksTypes";
@@ -11,7 +11,6 @@ import { useEffect } from "react";
 import { setCurrentProject } from "../../redux/actions/tasksActions";
 
 export const ProjectPage = () => {
-  const [searchParams] = useSearchParams();
   const dispatch = useDispatch<Dispatch<TasksActionTypes>>();
   const { projectId } = useParams<{ projectId: string }>();
   useEffect(() => {
@@ -28,12 +27,6 @@ export const ProjectPage = () => {
       </div>
     );
   }
-
-  const columns = {
-    Queue: project.tasks.filter((task: ITask) => task.status === "Queue"),
-    Development: project.tasks.filter((task: ITask) => task.status === "Development"),
-    Done: project.tasks.filter((task: ITask) => task.status === "Done"),
-  };
 
   return (
     <div className="tasks-page">

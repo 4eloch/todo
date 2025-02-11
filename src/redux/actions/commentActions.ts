@@ -1,37 +1,36 @@
 import { ADD_COMMENT, DELETE_COMMENT, EDIT_COMMENT } from "../constants";
-import { IComment } from "../types/tasksTypes";
+import {
+  IComment,
+  IEditCommentAction,
+  IAddCommentAction,
+  IDeleteCommentAction,
+} from "../types/tasksTypes";
 
-export const addComment = (
-  taskId: number,
-  comment: IComment,
-  parentId?: number
-): {
-  type: typeof ADD_COMMENT;
-  payload: { taskId: number; parentId?: number; comment: IComment };
-} => ({
+export const addComment = (payload: {
+  taskId: number;
+  projectId: number;
+  parentId?: number;
+  comment: IComment;
+}): IAddCommentAction => ({
   type: ADD_COMMENT,
-  payload: { taskId, comment, parentId },
+  payload,
 });
 
-export const editComment = (
-  taskId: number,
-  commentId: number,
-  newText: string
-): {
-  type: typeof EDIT_COMMENT;
-  payload: { taskId: number; commentId: number; newText: string };
-} => ({
+export const editComment = (payload: {
+  taskId: number;
+  projectId: number;
+  commentId: number;
+  newText: string;
+}): IEditCommentAction => ({
   type: EDIT_COMMENT,
-  payload: { taskId, commentId, newText },
+  payload,
 });
 
-export const deleteComment = (
-  taskId: number,
-  commentId: number
-): {
-  type: typeof DELETE_COMMENT;
-  payload: { taskId: number; commentId: number };
-} => ({
+export const deleteComment = (payload: {
+  taskId: number;
+  projectId: number;
+  commentId: number;
+}): IDeleteCommentAction => ({
   type: DELETE_COMMENT,
-  payload: { taskId, commentId },
+  payload,
 });

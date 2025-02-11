@@ -93,6 +93,7 @@ export interface IDeleteCommentAction {
   type: typeof DELETE_COMMENT;
   payload: {
     taskId: number;
+    projectId: number;
     commentId: number;
   };
 }

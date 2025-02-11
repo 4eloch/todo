@@ -82,7 +82,7 @@ const tasksReducer = (state = initialState, action: TasksActionTypes): ITasksSta
 
     case EDIT_TASK: {
       const currentProjectId = state.currentProjectId;
-      if (currentProjectId === null) return state; // Important check
+      if (currentProjectId === null) return state;
 
       const updatedProjects = state.projects?.map((project) => {
         if (project.id !== currentProjectId) return project;
@@ -194,23 +194,60 @@ const tasksReducer = (state = initialState, action: TasksActionTypes): ITasksSta
     }
 
     case DELETE_COMMENT: {
-      const { taskId, commentId } = action.payload;
-      const currentProjectId = state.currentProjectId;
+      const { taskId, projectId, commentId } = action.payload;
+      const projectIndex = state.projects.findIndex((p) => p.id === projectId);
+      if (projectIndex === -1) return state;
 
-      const updatedProjects = state.projects.map((project) => {
-        if (project.id !== currentProjectId) return project;
+      const updatedProjects = state.projects.map((project, index) => {
+        if (index !== projectIndex) return project;
 
-        const updatedTasks = project.tasks.map((task) => {
-          if (task.id !== taskId) return task;
+        const updateComments = (comments: IComment[]): IComment[] => {
+          return comments.map((c) => {
+            if (c.id === commentId) {
+              if (c.replies.length === 0) {
+                return {
+                  ...c,
+                  isDeleted: true,
+                };
+              } else {
+                return {
+                  ...c,
+                  text: "Комментарий был удалён",
+                  isDeleted: true,
+                };
+              }
+            }
+            return {
+              ...c,
+              replies: updateComments(c.replies),
+            };
+          });
+        };
 
-          const updatedComments = updateComments(task.comments, commentId); // Use the global updateComments function
-          return { ...task, comments: updatedComments };
-        });
+        const updateTask = (tasks: ITask[]): ITask[] => {
+          return tasks.map((task) => {
+            if (task.id === taskId) {
+              return {
+                ...task,
+                comments: updateComments(task.comments),
+              };
+            }
+            return {
+              ...task,
+              subtasks: updateTask(task.subtasks),
+            };
+          });
+        };
 
-        return { ...project, tasks: updatedTasks };
+        const updatedTasks = updateTask(project.tasks);
+
+        return {
+          ...project,
+          tasks: updatedTasks,
+        };
       });
 
-      localStorage.setItem("projects", JSON.stringify(updatedProjects)); // Update "projects" in localStorage
+      localStorage.setItem("projects", JSON.stringify(updatedProjects));
       return { ...state, projects: updatedProjects };
     }
 
@@ -271,14 +308,12 @@ const tasksReducer = (state = initialState, action: TasksActionTypes): ITasksSta
     }
 
     case ADD_PROJECT: {
-      console.log(state.projects);
       const newProjects = [...state.projects, action.payload];
       localStorage.setItem("projects", JSON.stringify(newProjects));
       return { ...state, projects: newProjects };
     }
 
     case DELETE_PROJECT: {
-      console.log(state.projects);
       const filteredProjects = state.projects.filter(
         (project: any) => project.id !== action.payload
       );

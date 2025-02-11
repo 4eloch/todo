@@ -8,15 +8,25 @@ import { Dispatch } from "redux";
 interface IEditCommentProps {
   isShown: boolean;
   onHide: () => void;
-  taskId: number;
+  projectId: number;
+  parentTaskId: number;
   commentId: number;
 }
 
-export const EditComment = ({ isShown, onHide, taskId, commentId }: IEditCommentProps) => {
+export const EditComment = ({
+  isShown,
+  onHide,
+  projectId,
+  parentTaskId,
+  commentId,
+}: IEditCommentProps) => {
   const dispatch = useDispatch<Dispatch<TasksActionTypes>>();
-  const tasks = useSelector((state: any) => state.tasks.tasks);
-  const task = tasks.find((t: ITask) => t.id === taskId);
-  const commentToEdit = task?.comments.find((c: IComment) => c.id === commentId);
+  const projects = useSelector((state: any) => state.tasks.projects);
+  const project = projects.find((p: any) => p.id === projectId);
+  const parentTask = project?.tasks.find((t: ITask) => t.id === parentTaskId);
+  const commentToEdit = parentTask?.comments
+    .flatMap((c: IComment) => [c, ...c.replies])
+    .find((c: IComment) => c.id === commentId);
 
   const [commentText, setCommentText] = useState(commentToEdit?.text || "");
 
@@ -34,7 +44,7 @@ export const EditComment = ({ isShown, onHide, taskId, commentId }: IEditComment
       return;
     }
 
-    dispatch(editComment(taskId, commentId, commentText));
+    dispatch(editComment({ taskId: parentTaskId, projectId, commentId, newText: commentText }));
     onHide();
   };
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDrag } from "react-dnd";
 import { useDispatch } from "react-redux";
 import { EditTask, AddComment, AddSubtask } from "../modals";
-import NestedCommentsSection from "./NestedCommentsSection";
+import { NestedCommentsSection } from "./NestedCommentsSection";
 import { FaEdit, FaTrash, FaPaperclip } from "react-icons/fa";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import {
@@ -215,30 +215,6 @@ export const TaskCard = ({ task }: ITaskCardProps) => {
           </OverlayTrigger>
         </div>
       </div>
-
-      <button
-        className="add-subtask-button"
-        onClick={handleAddSubtask}
-        style={{
-          padding: "8px 12px",
-          background: "#6c757d",
-          color: "#fff",
-          border: "none",
-          borderRadius: "4px",
-          cursor: "pointer",
-          transition: "background-color 0.2s ease",
-          marginTop: "8px",
-        }}
-      >
-        Добавить подзадачу
-      </button>
-
-      <button onClick={handleAddComment} className="add-comment-button">
-        Добавить комментарий
-      </button>
-
-      <SubtaskSection subtasks={task.subtasks} projectId={task.projectId} parentTaskId={task.id} />
-
       <div style={{ textAlign: "left" }}>
         <ul>
           <li
@@ -288,10 +264,31 @@ export const TaskCard = ({ task }: ITaskCardProps) => {
           </ul>
         </div>
       )}
+      <h5>Подзадачи</h5>
+      <button
+        className="add-subtask-button"
+        onClick={handleAddSubtask}
+        style={{
+          padding: "8px 12px",
+          background: "#6c757d",
+          color: "#fff",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+          transition: "background-color 0.2s ease",
+        }}
+      >
+        Добавить подзадачу
+      </button>
+      <SubtaskSection subtasks={task.subtasks} projectId={task.projectId} parentTaskId={task.id} />
 
       <EditTask isShown={showEditModal} onHide={handleCloseEditModal} task={task} />
       <h5>Комментарии</h5>
-      <NestedCommentsSection comments={task.comments} taskId={task.id} />
+      <button onClick={handleAddComment} className="add-comment-button">
+        Добавить комментарий
+      </button>
+      <NestedCommentsSection comments={task.comments} taskId={task.id} projectId={task.projectId} />
+
       <AddSubtask
         isShown={showAddSubtaskModal}
         onHide={handleCloseAddSubtaskModal}
@@ -302,6 +299,7 @@ export const TaskCard = ({ task }: ITaskCardProps) => {
         isShown={showAddCommentModal}
         onHide={handleCloseAddCommentModal}
         taskId={task.id}
+        projectId={task.projectId}
       />
     </div>
   );

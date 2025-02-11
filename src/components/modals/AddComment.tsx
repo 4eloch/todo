@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { addComment } from "../../redux/actions";
@@ -9,16 +9,12 @@ interface IAddCommentProps {
   isShown: boolean;
   onHide: () => void;
   taskId: number;
+  projectId: number;
   parentId?: number;
 }
 
-export const AddComment = ({ isShown, onHide, taskId, parentId }: IAddCommentProps) => {
+export const AddComment = ({ isShown, onHide, taskId, projectId, parentId }: IAddCommentProps) => {
   const dispatch = useDispatch<Dispatch<TasksActionTypes>>();
-  const projectId = useSelector((state: any) => state.currentProjectId);
-
-  useEffect(() => {
-    console.log(projectId);
-  }, []);
 
   const [commentText, setCommentText] = useState("");
 
@@ -34,7 +30,7 @@ export const AddComment = ({ isShown, onHide, taskId, parentId }: IAddCommentPro
       text: commentText,
       replies: [],
     };
-    dispatch(addComment(taskId, newComment, parentId));
+    dispatch(addComment({ taskId, projectId, comment: newComment, parentId }));
     setCommentText("");
     onHide();
   };

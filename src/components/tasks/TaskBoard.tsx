@@ -1,7 +1,7 @@
 import React from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import TaskColumn from "./TaskColumn";
+import { TaskColumn } from "./TaskColumn";
 import { useSelector } from "react-redux";
 import { AddTask } from "../modals";
 import { ITask } from "../../redux/types/tasksTypes";
@@ -11,7 +11,7 @@ interface TaskBoardProps {
   projectId: number;
 }
 
-const TaskBoard = ({ tasks, projectId }: TaskBoardProps) => {
+export const TaskBoard = ({ tasks, projectId }: TaskBoardProps) => {
   const searchQuery = useSelector((state: any) => state.tasks.searchQuery);
   const filteredTasks = tasks.filter(
     (task: ITask) =>
@@ -43,5 +43,3 @@ const TaskBoard = ({ tasks, projectId }: TaskBoardProps) => {
     </DndProvider>
   );
 };
-
-export default TaskBoard;

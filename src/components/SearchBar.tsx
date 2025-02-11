@@ -5,7 +5,7 @@ import { TasksActionTypes } from "../redux/types/tasksTypes";
 import { Dispatch } from "redux";
 import { FiX } from "react-icons/fi";
 
-const SearchBar = () => {
+export const SearchBar = () => {
   const dispatch = useDispatch<Dispatch<TasksActionTypes>>();
   const searchQuery = useSelector((state: any) => state.tasks.searchQuery);
 
@@ -43,5 +43,3 @@ const SearchBar = () => {
     </div>
   );
 };
-
-export default SearchBar;

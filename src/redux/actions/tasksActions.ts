@@ -14,10 +14,19 @@ import {
 } from "../constants";
 import {
   ITask,
+  IProject,
   IAddTaskAction,
   IEditTaskAction,
   IDeleteTaskAction,
-  IProject,
+  IAddSubtaskAction,
+  IEditSubtaskAction,
+  IDeleteSubtaskAction,
+  ISetSearchQueryAction,
+  IToggleTaskCompletionAction,
+  IUpdateTaskTimeAction,
+  IAddProjectAction,
+  IDeleteProjectAction,
+  ISetCurrentProjectAction,
 } from "../types/tasksTypes";
 
 export const addTask = (task: ITask): IAddTaskAction => ({
@@ -39,10 +48,7 @@ export const addSubtask = (payload: {
   taskId: number;
   projectId: number;
   subtask: ITask;
-}): {
-  type: typeof ADD_SUBTASK;
-  payload: { taskId: number; projectId: number; subtask: ITask };
-} => ({
+}): IAddSubtaskAction => ({
   type: ADD_SUBTASK,
   payload,
 });
@@ -52,10 +58,7 @@ export const editSubtask = (payload: {
   projectId: number;
   subtaskId: number;
   subtask: ITask;
-}): {
-  type: typeof EDIT_SUBTASK;
-  payload: { taskId: number; projectId: number; subtaskId: number; subtask: ITask };
-} => ({
+}): IEditSubtaskAction => ({
   type: EDIT_SUBTASK,
   payload,
 });
@@ -64,17 +67,12 @@ export const deleteSubtask = (payload: {
   taskId: number;
   projectId: number;
   subtaskId: number;
-}): {
-  type: typeof DELETE_SUBTASK;
-  payload: { taskId: number; projectId: number; subtaskId: number };
-} => ({
+}): IDeleteSubtaskAction => ({
   type: DELETE_SUBTASK,
   payload,
 });
 
-export const setSearchQuery = (
-  query: string
-): { type: typeof SET_SEARCH_QUERY; payload: string } => ({
+export const setSearchQuery = (query: string): ISetSearchQueryAction => ({
   type: SET_SEARCH_QUERY,
   payload: query,
 });
@@ -83,10 +81,7 @@ export const toggleTaskCompletion = (payload: {
   taskId: number;
   projectId: number;
   isCompleted: boolean;
-}): {
-  type: typeof TOGGLE_TASK_COMPLETION;
-  payload: { taskId: number; projectId: number; isCompleted: boolean };
-} => ({
+}): IToggleTaskCompletionAction => ({
   type: TOGGLE_TASK_COMPLETION,
   payload,
 });
@@ -95,29 +90,22 @@ export const updateTaskTime = (payload: {
   taskId: number;
   projectId: number;
   timeSpent: number;
-}): {
-  type: typeof UPDATE_TASK_TIME;
-  payload: { taskId: number; projectId: number; timeSpent: number };
-} => ({
+}): IUpdateTaskTimeAction => ({
   type: UPDATE_TASK_TIME,
   payload,
 });
 
-export const addProject = (project: IProject): { type: typeof ADD_PROJECT; payload: IProject } => ({
+export const addProject = (project: IProject): IAddProjectAction => ({
   type: ADD_PROJECT,
   payload: project,
 });
 
-export const deleteProject = (
-  projectId: number
-): { type: typeof DELETE_PROJECT; payload: number } => ({
+export const deleteProject = (projectId: number): IDeleteProjectAction => ({
   type: DELETE_PROJECT,
   payload: projectId,
 });
 
-export const setCurrentProject = (
-  projectId: number
-): { type: typeof SET_CURRENT_PROJECT; payload: number } => ({
+export const setCurrentProject = (projectId: number): ISetCurrentProjectAction => ({
   type: SET_CURRENT_PROJECT,
   payload: projectId,
 });

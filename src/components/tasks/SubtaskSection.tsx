@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { deleteSubtask, editSubtask } from "../../redux/actions/tasksActions";
 import { TasksActionTypes, ITask } from "../../redux/types/tasksTypes";
@@ -49,7 +49,6 @@ export const SubtaskSection = ({ subtasks, projectId, parentTaskId }: ISubtaskSe
 
   return (
     <div className="subtask-section">
-      <h4>Подзадачи</h4>
       {subtasks.map((subtask) => (
         <div
           key={subtask.id}
@@ -62,7 +61,6 @@ export const SubtaskSection = ({ subtasks, projectId, parentTaskId }: ISubtaskSe
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            {/* Чекбокс выполнения подзадачи */}
             <button
               className="toggle-subtask-completion-button"
               onClick={() => handleToggleSubtaskCompletion(subtask.id, !subtask.isCompleted)}
@@ -88,6 +86,7 @@ export const SubtaskSection = ({ subtasks, projectId, parentTaskId }: ISubtaskSe
               className="subtask-title"
               style={{
                 textAlign: "left",
+                margin: "0 0 0 10px",
                 textDecoration: subtask.isCompleted ? "line-through" : "none",
                 color: subtask.isCompleted ? "#6c757d" : "#333",
                 marginLeft: "10px",
@@ -100,12 +99,10 @@ export const SubtaskSection = ({ subtasks, projectId, parentTaskId }: ISubtaskSe
               {subtask.title}
             </h5>
           </div>
-          {/* Блок действий */}
           <div
             className="subtask-actions"
             style={{ display: "flex", gap: "10px", marginLeft: "10px" }}
           >
-            {/* Кнопка редактирования (карандаш) с tooltip */}
             <OverlayTrigger
               placement="top"
               overlay={<Tooltip id="edit-subtask-tooltip">Редактировать подзадачу</Tooltip>}
@@ -124,8 +121,6 @@ export const SubtaskSection = ({ subtasks, projectId, parentTaskId }: ISubtaskSe
                 <FaEdit size={16} />
               </button>
             </OverlayTrigger>
-
-            {/* Кнопка удаления (мусорное ведро) с tooltip */}
             <OverlayTrigger
               placement="top"
               overlay={<Tooltip id="delete-subtask-tooltip">Удалить подзадачу</Tooltip>}

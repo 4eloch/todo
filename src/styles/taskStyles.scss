@@ -288,12 +288,12 @@
 
   .task-header {
     display: flex;
-    align-items: center;
     justify-content: space-between;
     margin-bottom: 10px;
 
     .task-title-container {
       display: flex;
+      top: 50%;
       align-items: center;
       gap: 10px;
       cursor: pointer;
@@ -342,6 +342,7 @@
     .task-actions {
       display: flex;
       gap: 10px;
+      align-items: center;
 
       button {
         background: none;
@@ -364,7 +365,9 @@
 
       .attach-file-button {
         color: #17a2b8;
-
+        cursor: pointer;
+        transition: color 0.2s ease;
+        margin-bottom: 0;
         &:hover {
           color: #138496;
         }

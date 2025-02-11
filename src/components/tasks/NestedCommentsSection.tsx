@@ -1,15 +1,19 @@
 import React, { useState } from "react";
 import { AddComment } from "../modals";
-import CommentCard from "./CommentCard";
-import { IComment } from "../../redux/types/tasksTypes";
+import { CommentCard } from "./CommentCard";
+import { useDispatch, useSelector } from "react-redux";
+import { IComment, TasksActionTypes } from "../../redux/types/tasksTypes";
+import { Dispatch } from "redux";
 import "../../styles/taskStyles.scss";
 
 interface INestedCommentsProps {
   comments: IComment[];
   taskId: number;
+  projectId: number;
 }
 
-const NestedCommentsSection = ({ comments, taskId }: INestedCommentsProps) => {
+export const NestedCommentsSection = ({ comments, taskId, projectId }: INestedCommentsProps) => {
+  const dispatch = useDispatch<Dispatch<TasksActionTypes>>();
   const [expandedComments, setExpandedComments] = useState<number[]>([]);
   const [showReplyModal, setShowReplyModal] = React.useState(false);
   const [parentId, setParentId] = React.useState<number | undefined>(undefined);
@@ -31,13 +35,12 @@ const NestedCommentsSection = ({ comments, taskId }: INestedCommentsProps) => {
   };
 
   const renderComments = (comments: IComment[], depth = 0) => {
-    const styled = { marginLeft: `${depth === 0 ? 0 : depth + 20}px` };
-
     return comments.map((comment) => (
-      <div key={comment.id} style={styled}>
+      <div key={comment.id} style={{ marginLeft: `${depth === 0 ? 0 : depth + 20}px` }}>
         <CommentCard
           comment={comment}
           taskId={taskId}
+          projectId={projectId}
           onReply={handleReply}
           onToggleExpand={toggleExpand}
           isExpanded={expandedComments.includes(comment.id)}
@@ -56,10 +59,9 @@ const NestedCommentsSection = ({ comments, taskId }: INestedCommentsProps) => {
         isShown={showReplyModal}
         onHide={handleCloseReplyModal}
         taskId={taskId}
+        projectId={projectId}
         parentId={parentId}
       />
     </div>
   );
 };
-
-export default NestedCommentsSection;
