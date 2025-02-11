@@ -3,7 +3,7 @@ import { TaskBoard } from "../tasks/TaskBoard";
 import { SearchBar } from "../SearchBar";
 import { AddTaskButton } from "../AddTaskButton";
 import { useSelector } from "react-redux";
-import { TasksActionTypes, ITask } from "../../redux/types/tasksTypes";
+import { TasksActionTypes } from "../../redux/types/tasksTypes";
 import { Dispatch } from "redux";
 import { useDispatch } from "react-redux";
 import "../../styles/taskStyles.scss";
