@@ -43,10 +43,7 @@ const CommentCard = ({
       <p>{comment.isDeleted ? "Комментарий был удалён" : comment.text}</p>
 
       {!comment.isDeleted && (
-        <div
-          className="comment-actions"
-          style={{ display: "flex", gap: "10px", marginTop: "5px" }}
-        >
+        <div className="comment-actions" style={{ display: "flex", gap: "10px", marginTop: "5px" }}>
           <span
             className="reply-comment-button"
             onClick={() => onReply(comment.id)}
@@ -90,7 +87,7 @@ const CommentCard = ({
             placement="left"
             overlay={
               <Tooltip id="toggle-replies-tooltip">
-                Показать/Скрыть ответы
+                {isExpanded ? "Скрыть ответы" : "Показать ответы"}
               </Tooltip>
             }
           >
@@ -108,7 +105,6 @@ const CommentCard = ({
                 cursor: "pointer",
                 fontSize: "0.9em",
               }}
-              title={isExpanded ? "Скрыть ответы" : "Показать ответы"}
             >
               {isExpanded ? "-" : "+"}
             </span>

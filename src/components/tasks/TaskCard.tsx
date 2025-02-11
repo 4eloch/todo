@@ -281,8 +281,8 @@ const TaskCard = ({ task }: ITaskCardProps) => {
         Добавить комментарий
       </button>
 
-      <NestedCommentsSection comments={task.comments} taskId={task.id} />
       <EditTask isShown={showEditModal} onHide={handleCloseEditModal} taskId={task.id} />
+      <NestedCommentsSection comments={task.comments} taskId={task.id} />
       <AddComment
         isShown={showAddCommentModal}
         onHide={handleCloseAddCommentModal}

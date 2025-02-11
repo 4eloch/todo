@@ -5,6 +5,7 @@ import { addProject, deleteProject } from "../../redux/actions/tasksActions";
 import { TasksActionTypes, IProject } from "../../redux/types/tasksTypes";
 import { Dispatch } from "redux";
 import { Modal, Button, Form } from "react-bootstrap";
+import { FaTrash } from "react-icons/fa";
 import "../../styles/projectsStyles.scss";
 
 export const MainPage = () => {
@@ -59,14 +60,10 @@ export const MainPage = () => {
               onClick={() => handleDeleteProject(project.id)}
               style={{
                 background: "none",
-                border: "none",
-                cursor: "pointer",
-                color: "#dc3545",
-                transition: "color 0.2s ease",
-                marginLeft: "10px",
+                borderRadius: "50%",
               }}
             >
-              Удалить
+              <FaTrash size={16} color="#dc3545" />
             </button>
           </li>
         ))}
