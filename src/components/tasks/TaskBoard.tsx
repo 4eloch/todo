@@ -3,7 +3,7 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import TaskColumn from "./TaskColumn";
 import { useSelector } from "react-redux";
-import AddTask from "../modals/AddTask";
+import { AddTask } from "../modals";
 import { ITask } from "../../redux/types/tasksTypes";
 
 interface TaskBoardProps {
@@ -20,9 +20,7 @@ const TaskBoard = ({ tasks, projectId }: TaskBoardProps) => {
   );
   const columns = {
     Queue: filteredTasks.filter((task: ITask) => task.status === "Queue"),
-    Development: filteredTasks.filter(
-      (task: ITask) => task.status === "Development"
-    ),
+    Development: filteredTasks.filter((task: ITask) => task.status === "Development"),
     Done: filteredTasks.filter((task: ITask) => task.status === "Done"),
   };
   const [showAddTaskModal, setShowAddTaskModal] = React.useState(false);
@@ -33,21 +31,9 @@ const TaskBoard = ({ tasks, projectId }: TaskBoardProps) => {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="task-board">
-        <TaskColumn
-          title="Queue"
-          tasks={columns.Queue}
-          filteredTasks={filteredTasks}
-        />
-        <TaskColumn
-          title="Development"
-          tasks={columns.Development}
-          filteredTasks={filteredTasks}
-        />
-        <TaskColumn
-          title="Done"
-          tasks={columns.Done}
-          filteredTasks={filteredTasks}
-        />
+        <TaskColumn title="Queue" tasks={columns.Queue} filteredTasks={filteredTasks} />
+        <TaskColumn title="Development" tasks={columns.Development} filteredTasks={filteredTasks} />
+        <TaskColumn title="Done" tasks={columns.Done} filteredTasks={filteredTasks} />
         <AddTask
           isShown={showAddTaskModal}
           onHide={handleCloseAddTaskModal}

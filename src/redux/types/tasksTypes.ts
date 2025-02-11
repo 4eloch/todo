@@ -2,6 +2,9 @@ import {
   ADD_TASK,
   EDIT_TASK,
   DELETE_TASK,
+  ADD_SUBTASK,
+  EDIT_SUBTASK,
+  DELETE_SUBTASK,
   ADD_COMMENT,
   EDIT_COMMENT,
   DELETE_COMMENT,
@@ -57,6 +60,21 @@ export interface IDeleteTaskAction {
   payload: number;
 }
 
+export interface IAddSubtaskAction {
+  type: typeof ADD_SUBTASK;
+  payload: { taskId: number; projectId: number; subtask: ITask };
+}
+
+export interface IEditSubtaskAction {
+  type: typeof EDIT_SUBTASK;
+  payload: { taskId: number; projectId: number; subtaskId: number; subtask: ITask };
+}
+
+export interface IDeleteSubtaskAction {
+  type: typeof DELETE_SUBTASK;
+  payload: { taskId: number; projectId: number; subtaskId: number };
+}
+
 export interface IAddCommentAction {
   type: typeof ADD_COMMENT;
   payload: { taskId: number; parentId?: number; comment: IComment };
@@ -88,6 +106,7 @@ export interface IToggleTaskCompletionAction {
   type: typeof TOGGLE_TASK_COMPLETION;
   payload: {
     taskId: number;
+    projectId: number;
     isCompleted: boolean;
   };
 }
@@ -119,6 +138,9 @@ export type TasksActionTypes =
   | IAddTaskAction
   | IEditTaskAction
   | IDeleteTaskAction
+  | IAddSubtaskAction
+  | IEditSubtaskAction
+  | IDeleteSubtaskAction
   | IEditCommentAction
   | IAddCommentAction
   | IDeleteCommentAction

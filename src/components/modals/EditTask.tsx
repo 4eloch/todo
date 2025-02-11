@@ -9,13 +9,11 @@ import "../../styles/formStyles.scss";
 interface IEditTaskProps {
   isShown: boolean;
   onHide: () => void;
-  taskId: number;
+  task: ITask;
 }
 
-const EditTask = ({ isShown, onHide, taskId }: IEditTaskProps) => {
+export const EditTask = ({ isShown, onHide, task }: IEditTaskProps) => {
   const dispatch = useDispatch<Dispatch<TasksActionTypes>>();
-  const tasks = useSelector((state: any) => state.tasks.tasks);
-  const taskToEdit = tasks?.find((task: ITask) => task.id === taskId);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -23,32 +21,32 @@ const EditTask = ({ isShown, onHide, taskId }: IEditTaskProps) => {
   const [priority, setPriority] = useState("");
 
   useEffect(() => {
-    if (taskToEdit) {
-      setTitle(taskToEdit.title);
-      setDescription(taskToEdit.description);
-      setDueDate(taskToEdit.dueDate);
-      setPriority(taskToEdit.priority);
+    if (task) {
+      setTitle(task.title);
+      setDescription(task.description);
+      setDueDate(task.dueDate);
+      setPriority(task.priority);
     }
-  }, [taskToEdit]);
+  }, [task]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!title.trim()) {
+      alert("Название задачи не может быть пустым!");
+      return;
+    }
     const updatedTask: ITask = {
-      id: taskId,
-      projectId: taskToEdit?.projectId || 0,
+      ...task,
       title,
       description,
       dueDate,
       priority,
-      createdAt: taskToEdit?.createdAt || new Date().toISOString(),
-      timeSpent: taskToEdit?.timeSpent || 0,
-      files: taskToEdit?.files || [],
-      status: taskToEdit?.status || "Queue",
-      subtasks: taskToEdit?.subtasks || [],
-      comments: taskToEdit?.comments || [],
-      isCompleted: taskToEdit?.isCompleted || false,
     };
     dispatch(editTask(updatedTask));
+    setTitle("");
+    setDescription("");
+    setDueDate("");
+    setPriority("Low");
     onHide();
   };
 
@@ -112,5 +110,3 @@ const EditTask = ({ isShown, onHide, taskId }: IEditTaskProps) => {
     </Modal>
   );
 };
-
-export default EditTask;

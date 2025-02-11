@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useDrag } from "react-dnd";
 import { useDispatch } from "react-redux";
-import EditTask from "../modals/EditTask";
-import AddComment from "../modals/AddComment";
+import { EditTask, AddComment, AddSubtask } from "../modals";
 import NestedCommentsSection from "./NestedCommentsSection";
 import { FaEdit, FaTrash, FaPaperclip } from "react-icons/fa";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
@@ -14,18 +13,18 @@ import {
 } from "../../redux/actions/tasksActions";
 import { TasksActionTypes, ITask } from "../../redux/types/tasksTypes";
 import { Dispatch } from "redux";
+import { SubtaskSection } from "./SubtaskSection";
 
 interface ITaskCardProps {
   task: ITask;
 }
 
-const TaskCard = ({ task }: ITaskCardProps) => {
+export const TaskCard = ({ task }: ITaskCardProps) => {
   const dispatch = useDispatch<Dispatch<TasksActionTypes>>();
   const [showEditModal, setShowEditModal] = React.useState(false);
   const [showAddCommentModal, setShowAddCommentModal] = React.useState(false);
+  const [showAddSubtaskModal, setShowAddSubtaskModal] = useState(false);
   const [localTimeSpent, setLocalTimeSpent] = useState(task.timeSpent);
-  const [startTime, setStartTime] = useState<number | null>(null); // Store the timestamp when the timer starts
-  const timerRef = useRef<NodeJS.Timeout | null>(null); // useRef to store the timer
 
   const [{ isDragging }, drag] = useDrag({
     type: "TASK",
@@ -77,7 +76,13 @@ const TaskCard = ({ task }: ITaskCardProps) => {
   };
 
   const handleToggleCompletion = () => {
-    dispatch(toggleTaskCompletion(task.id, !task.isCompleted));
+    dispatch(
+      toggleTaskCompletion({
+        taskId: task.id,
+        projectId: task.projectId,
+        isCompleted: !task.isCompleted,
+      })
+    );
   };
 
   const formatTimeSpent = (seconds: number): string => {
@@ -92,58 +97,30 @@ const TaskCard = ({ task }: ITaskCardProps) => {
 
     if (task.status === "Development") {
       timer = setInterval(() => {
-        setLocalTimeSpent((prevTime: number) => prevTime + 1);
-        dispatch(updateTaskTime(task.id, localTimeSpent + 1));
+        setLocalTimeSpent((prevTime) => prevTime + 1);
+        dispatch(
+          updateTaskTime({
+            taskId: task.id,
+            projectId: task.projectId,
+            timeSpent: localTimeSpent + 1,
+          })
+        );
       }, 1000);
     }
-
     return () => {
       if (timer) clearInterval(timer);
     };
   }, [task.status, localTimeSpent, dispatch]);
 
-  const calculateTimeSpent = (): number => {
-    if (!startTime) {
-      return task.timeSpent || 0; // Use the existing timeSpent if timer hasn't started
-    }
-    return task.timeSpent + Math.floor((Date.now() - startTime) / 1000); // Add elapsed time to initial timeSpent
+  const taskCompleted = task.isCompleted ? "✓" : "";
+
+  const handleAddSubtask = () => {
+    setShowAddSubtaskModal(true);
   };
 
-  useEffect(() => {
-    if (task.status === "Development" && !task.isCompleted) {
-      if (!startTime) {
-        setStartTime(Date.now());
-      }
-
-      if (!timerRef.current) {
-        timerRef.current = setInterval(() => {
-          dispatch(updateTaskTime(task.id, calculateTimeSpent()));
-        }, 1000);
-      }
-    } else if (task.status === "Done" && startTime) {
-      // Only reset if transitioning TO "Done" *from a timed state*
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-      setStartTime(null); // Reset startTime only when moving to "Done"
-      dispatch(updateTaskTime(task.id, calculateTimeSpent()));
-    } else {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-    }
-
-    return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-    };
-  }, [task.status, task.isCompleted, dispatch, calculateTimeSpent]); // Correct dependencies
-
-  const taskCompleted = task.isCompleted ? "✓" : "";
+  const handleCloseAddSubtaskModal = () => {
+    setShowAddSubtaskModal(false);
+  };
 
   return (
     <div
@@ -163,7 +140,7 @@ const TaskCard = ({ task }: ITaskCardProps) => {
           Создана: {new Date(task.createdAt).toLocaleDateString()}
         </span>
         <span className="task-time-spent" style={{ color: "#6c757d", fontSize: "0.9em" }}>
-          Время в работе: {formatTimeSpent(calculateTimeSpent())}
+          Время в работе: {formatTimeSpent(localTimeSpent)}
         </span>
       </div>
       <div className="task-header">
@@ -239,10 +216,44 @@ const TaskCard = ({ task }: ITaskCardProps) => {
         </div>
       </div>
 
-      <p>{task.description}</p>
-      <p>Дата окончания: {task.dueDate}</p>
-      <p>Приоритет: {task.priority}</p>
+      <button
+        className="add-subtask-button"
+        onClick={handleAddSubtask}
+        style={{
+          padding: "8px 12px",
+          background: "#6c757d",
+          color: "#fff",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+          transition: "background-color 0.2s ease",
+          marginTop: "8px",
+        }}
+      >
+        Добавить подзадачу
+      </button>
 
+      <button onClick={handleAddComment} className="add-comment-button">
+        Добавить комментарий
+      </button>
+
+      <SubtaskSection subtasks={task.subtasks} projectId={task.projectId} parentTaskId={task.id} />
+
+      <div style={{ textAlign: "left" }}>
+        <ul>
+          <li
+            className="task-description"
+            style={{
+              whiteSpace: "normal",
+              wordBreak: "break-word",
+            }}
+          >
+            Описание: {task.description}
+          </li>
+          <li>Дата окончания: {task.dueDate}</li>
+          <li>Приоритет: {task.priority}</li>
+        </ul>
+      </div>
       {task.files.length > 0 && (
         <div className="attached-files">
           <h4>Прикреплённые файлы:</h4>
@@ -277,12 +288,16 @@ const TaskCard = ({ task }: ITaskCardProps) => {
           </ul>
         </div>
       )}
-      <button onClick={handleAddComment} className="add-comment-button">
-        Добавить комментарий
-      </button>
 
-      <EditTask isShown={showEditModal} onHide={handleCloseEditModal} taskId={task.id} />
+      <EditTask isShown={showEditModal} onHide={handleCloseEditModal} task={task} />
+      <h5>Комментарии</h5>
       <NestedCommentsSection comments={task.comments} taskId={task.id} />
+      <AddSubtask
+        isShown={showAddSubtaskModal}
+        onHide={handleCloseAddSubtaskModal}
+        taskId={task.id}
+        projectId={task.projectId}
+      />
       <AddComment
         isShown={showAddCommentModal}
         onHide={handleCloseAddCommentModal}
@@ -291,5 +306,3 @@ const TaskCard = ({ task }: ITaskCardProps) => {
     </div>
   );
 };
-
-export default TaskCard;

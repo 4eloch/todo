@@ -8,6 +8,9 @@ import {
   ADD_PROJECT,
   DELETE_PROJECT,
   SET_CURRENT_PROJECT,
+  ADD_SUBTASK,
+  DELETE_SUBTASK,
+  EDIT_SUBTASK,
 } from "../constants";
 import {
   ITask,
@@ -32,6 +35,43 @@ export const deleteTask = (taskId: number): IDeleteTaskAction => ({
   payload: taskId,
 });
 
+export const addSubtask = (payload: {
+  taskId: number;
+  projectId: number;
+  subtask: ITask;
+}): {
+  type: typeof ADD_SUBTASK;
+  payload: { taskId: number; projectId: number; subtask: ITask };
+} => ({
+  type: ADD_SUBTASK,
+  payload,
+});
+
+export const editSubtask = (payload: {
+  taskId: number;
+  projectId: number;
+  subtaskId: number;
+  subtask: ITask;
+}): {
+  type: typeof EDIT_SUBTASK;
+  payload: { taskId: number; projectId: number; subtaskId: number; subtask: ITask };
+} => ({
+  type: EDIT_SUBTASK,
+  payload,
+});
+
+export const deleteSubtask = (payload: {
+  taskId: number;
+  projectId: number;
+  subtaskId: number;
+}): {
+  type: typeof DELETE_SUBTASK;
+  payload: { taskId: number; projectId: number; subtaskId: number };
+} => ({
+  type: DELETE_SUBTASK,
+  payload,
+});
+
 export const setSearchQuery = (
   query: string
 ): { type: typeof SET_SEARCH_QUERY; payload: string } => ({
@@ -39,31 +79,31 @@ export const setSearchQuery = (
   payload: query,
 });
 
-export const toggleTaskCompletion = (
-  taskId: number,
-  isCompleted: boolean
-): {
+export const toggleTaskCompletion = (payload: {
+  taskId: number;
+  projectId: number;
+  isCompleted: boolean;
+}): {
   type: typeof TOGGLE_TASK_COMPLETION;
-  payload: { taskId: number; isCompleted: boolean };
+  payload: { taskId: number; projectId: number; isCompleted: boolean };
 } => ({
   type: TOGGLE_TASK_COMPLETION,
-  payload: { taskId, isCompleted },
+  payload,
 });
 
-export const updateTaskTime = (
-  taskId: number,
-  timeSpent: number
-): {
+export const updateTaskTime = (payload: {
+  taskId: number;
+  projectId: number;
+  timeSpent: number;
+}): {
   type: typeof UPDATE_TASK_TIME;
-  payload: { taskId: number; timeSpent: number };
+  payload: { taskId: number; projectId: number; timeSpent: number };
 } => ({
   type: UPDATE_TASK_TIME,
-  payload: { taskId, timeSpent },
+  payload,
 });
 
-export const addProject = (
-  project: IProject
-): { type: typeof ADD_PROJECT; payload: IProject } => ({
+export const addProject = (project: IProject): { type: typeof ADD_PROJECT; payload: IProject } => ({
   type: ADD_PROJECT,
   payload: project,
 });

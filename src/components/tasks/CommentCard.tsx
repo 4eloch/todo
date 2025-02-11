@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import EditComment from "../modals/EditComment";
+import { EditComment } from "../modals";
 import { deleteComment } from "../../redux/actions";
 import { TasksActionTypes, IComment } from "../../redux/types/tasksTypes";
 import { Dispatch } from "redux";
@@ -39,7 +39,10 @@ const CommentCard = ({
   };
 
   return (
-    <div className="comment-card">
+    <div
+      className="comment-card"
+      style={{ textAlign: "left", whiteSpace: "normal", wordBreak: "break-word" }}
+    >
       <p>{comment.isDeleted ? "Комментарий был удалён" : comment.text}</p>
 
       {!comment.isDeleted && (
@@ -113,7 +116,7 @@ const CommentCard = ({
       </div>
 
       <EditComment
-        show={showEditModal}
+        isShown={showEditModal}
         onHide={handleCloseEditModal}
         taskId={taskId}
         commentId={comment.id}

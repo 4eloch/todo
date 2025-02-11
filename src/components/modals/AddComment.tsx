@@ -12,14 +12,14 @@ interface IAddCommentProps {
   parentId?: number;
 }
 
-const AddComment = ({ isShown, onHide, taskId, parentId }: IAddCommentProps) => {
+export const AddComment = ({ isShown, onHide, taskId, parentId }: IAddCommentProps) => {
   const dispatch = useDispatch<Dispatch<TasksActionTypes>>();
   const projectId = useSelector((state: any) => state.currentProjectId);
-  const tasks = useSelector((state: any) => state.projects);
+
   useEffect(() => {
     console.log(projectId);
   }, []);
-  const task = tasks?.find((t: ITask) => t.id === taskId);
+
   const [commentText, setCommentText] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -56,7 +56,8 @@ const AddComment = ({ isShown, onHide, taskId, parentId }: IAddCommentProps) => 
               required
             />
           </Form.Group>
-          <Button variant="primary" type="submit">
+          <br />
+          <Button variant="primary" type="submit" style={{ width: "100%" }}>
             Сохранить
           </Button>
         </Form>
@@ -64,5 +65,3 @@ const AddComment = ({ isShown, onHide, taskId, parentId }: IAddCommentProps) => 
     </Modal>
   );
 };
-
-export default AddComment;

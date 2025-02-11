@@ -12,7 +12,7 @@ interface IAddTaskProps {
   projectId: number;
 }
 
-const AddTask = ({ isShown, onHide, projectId }: IAddTaskProps) => {
+export const AddTask = ({ isShown, onHide, projectId }: IAddTaskProps) => {
   const dispatch = useDispatch<Dispatch<any>>();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -104,5 +104,3 @@ const AddTask = ({ isShown, onHide, projectId }: IAddTaskProps) => {
     </Modal>
   );
 };
-
-export default AddTask;

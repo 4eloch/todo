@@ -1,13 +1,13 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { Dispatch } from "redux";
-import AddTask from "./modals/AddTask";
+import { AddTask } from "./modals";
 
 interface IAddTaskButtonProps {
   projectId: number;
 }
 
-const AddTaskButton = ({ projectId }: IAddTaskButtonProps) => {
+export const AddTaskButton = ({ projectId }: IAddTaskButtonProps) => {
   const dispatch = useDispatch<Dispatch<any>>();
   const [showAddTaskModal, setShowAddTaskModal] = React.useState(false);
 
@@ -24,13 +24,7 @@ const AddTaskButton = ({ projectId }: IAddTaskButtonProps) => {
       <button className="add-task-button" onClick={handleAddTask}>
         Добавить задачу
       </button>
-      <AddTask
-        isShown={showAddTaskModal}
-        onHide={handleCloseAddTaskModal}
-        projectId={projectId}
-      />
+      <AddTask isShown={showAddTaskModal} onHide={handleCloseAddTaskModal} projectId={projectId} />
     </>
   );
 };
-
-export default AddTaskButton;

@@ -1,7 +1,7 @@
 import { useParams, useSearchParams } from "react-router-dom";
 import TaskBoard from "../tasks/TaskBoard";
 import SearchBar from "../SearchBar";
-import AddTaskButton from "../AddTaskButton";
+import { AddTaskButton } from "../AddTaskButton";
 import { useSelector } from "react-redux";
 import { TasksActionTypes, ITask } from "../../redux/types/tasksTypes";
 import { Dispatch } from "redux";
@@ -19,9 +19,7 @@ export const ProjectPage = () => {
     dispatch(setCurrentProject(parseInt(projectId)));
   }, [projectId]);
   const projects = useSelector((state: any) => state.tasks.projects);
-  const project = projects?.find(
-    (p: any) => p.id === parseInt(projectId || "0", 10)
-  );
+  const project = projects?.find((p: any) => p.id === parseInt(projectId || "0", 10));
 
   if (!project) {
     return (
@@ -33,9 +31,7 @@ export const ProjectPage = () => {
 
   const columns = {
     Queue: project.tasks.filter((task: ITask) => task.status === "Queue"),
-    Development: project.tasks.filter(
-      (task: ITask) => task.status === "Development"
-    ),
+    Development: project.tasks.filter((task: ITask) => task.status === "Development"),
     Done: project.tasks.filter((task: ITask) => task.status === "Done"),
   };
 
@@ -48,10 +44,7 @@ export const ProjectPage = () => {
           <AddTaskButton projectId={parseInt(projectId || "0", 10)} />
         </div>
       </header>
-      <TaskBoard
-        tasks={project.tasks}
-        projectId={parseInt(projectId || "0", 10)}
-      />
+      <TaskBoard tasks={project.tasks} projectId={parseInt(projectId || "0", 10)} />
     </div>
   );
 };

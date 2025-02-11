@@ -88,6 +88,7 @@ export const MainPage = () => {
                 required
               />
             </Form.Group>
+            <br />
             <Button variant="primary" type="submit">
               Сохранить
             </Button>

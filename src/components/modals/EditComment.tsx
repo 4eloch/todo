@@ -2,32 +2,21 @@ import React, { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { editComment } from "../../redux/actions";
-import {
-  TasksActionTypes,
-  IComment,
-  ITask,
-} from "../../redux/types/tasksTypes";
+import { TasksActionTypes, IComment, ITask } from "../../redux/types/tasksTypes";
 import { Dispatch } from "redux";
 
 interface IEditCommentProps {
-  show: boolean;
+  isShown: boolean;
   onHide: () => void;
   taskId: number;
   commentId: number;
 }
 
-const EditComment = ({
-  show,
-  onHide,
-  taskId,
-  commentId,
-}: IEditCommentProps) => {
+export const EditComment = ({ isShown, onHide, taskId, commentId }: IEditCommentProps) => {
   const dispatch = useDispatch<Dispatch<TasksActionTypes>>();
   const tasks = useSelector((state: any) => state.tasks.tasks);
   const task = tasks.find((t: ITask) => t.id === taskId);
-  const commentToEdit = task?.comments.find(
-    (c: IComment) => c.id === commentId
-  );
+  const commentToEdit = task?.comments.find((c: IComment) => c.id === commentId);
 
   const [commentText, setCommentText] = useState(commentToEdit?.text || "");
 
@@ -50,7 +39,7 @@ const EditComment = ({
   };
 
   return (
-    <Modal show={show} onHide={onHide} backdrop="static" keyboard={false}>
+    <Modal show={isShown} onHide={onHide} backdrop="static" keyboard={false}>
       <Modal.Header closeButton>
         <Modal.Title>Редактирование комментария</Modal.Title>
       </Modal.Header>
@@ -74,5 +63,3 @@ const EditComment = ({
     </Modal>
   );
 };
-
-export default EditComment;

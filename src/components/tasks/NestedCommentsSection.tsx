@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-import AddComment from "../modals/AddComment";
+import { AddComment } from "../modals";
 import CommentCard from "./CommentCard";
-import { useDispatch } from "react-redux";
-import { TasksActionTypes, IComment } from "../../redux/types/tasksTypes";
-import { Dispatch } from "redux";
+import { IComment } from "../../redux/types/tasksTypes";
 import "../../styles/taskStyles.scss";
 
 interface INestedCommentsProps {
@@ -12,8 +10,6 @@ interface INestedCommentsProps {
 }
 
 const NestedCommentsSection = ({ comments, taskId }: INestedCommentsProps) => {
-  const dispatch = useDispatch<Dispatch<TasksActionTypes>>();
-
   const [expandedComments, setExpandedComments] = useState<number[]>([]);
   const [showReplyModal, setShowReplyModal] = React.useState(false);
   const [parentId, setParentId] = React.useState<number | undefined>(undefined);
@@ -30,9 +26,7 @@ const NestedCommentsSection = ({ comments, taskId }: INestedCommentsProps) => {
 
   const toggleExpand = (commentId: number) => {
     setExpandedComments((prev) =>
-      prev.includes(commentId)
-        ? prev.filter((id) => id !== commentId)
-        : [...prev, commentId]
+      prev.includes(commentId) ? prev.filter((id) => id !== commentId) : [...prev, commentId]
     );
   };
 
@@ -49,8 +43,7 @@ const NestedCommentsSection = ({ comments, taskId }: INestedCommentsProps) => {
           isExpanded={expandedComments.includes(comment.id)}
         />
 
-        {expandedComments.includes(comment.id) &&
-          renderComments(comment.replies, depth + 1)}
+        {expandedComments.includes(comment.id) && renderComments(comment.replies, depth + 1)}
       </div>
     ));
   };

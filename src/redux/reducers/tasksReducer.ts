@@ -2,6 +2,9 @@ import {
   ADD_TASK,
   EDIT_TASK,
   DELETE_TASK,
+  ADD_SUBTASK,
+  EDIT_SUBTASK,
+  DELETE_SUBTASK,
   ADD_COMMENT,
   EDIT_COMMENT,
   DELETE_COMMENT,
@@ -216,25 +219,45 @@ const tasksReducer = (state = initialState, action: TasksActionTypes): ITasksSta
     }
 
     case TOGGLE_TASK_COMPLETION: {
-      const { taskId, isCompleted } = action.payload;
-      const updatedTasks = state.tasks?.map((task) => {
-        if (task.id !== taskId) return task;
+      const { taskId, projectId, isCompleted } = action.payload;
+      const projectIndex = state.projects.findIndex((p) => p.id === projectId);
+      if (projectIndex === -1) return state;
 
-        const newStatus = isCompleted
-          ? "Done"
-          : task.status === "Done"
-            ? "Development"
-            : task.status;
+      const updatedProjects = state.projects.map((project, index) => {
+        if (index !== projectIndex) return project;
+
+        const updateTask = (tasks: ITask[]): ITask[] => {
+          return tasks.map((task) => {
+            if (task.id === taskId) {
+              const newStatus = isCompleted
+                ? "Done"
+                : task.status === "Done"
+                  ? "Development"
+                  : task.status;
+
+              return {
+                ...task,
+                isCompleted,
+                status: newStatus,
+              };
+            }
+            return {
+              ...task,
+              subtasks: updateTask(task.subtasks),
+            };
+          });
+        };
+
+        const updatedTasks = updateTask(project.tasks);
 
         return {
-          ...task,
-          isCompleted,
-          status: newStatus,
+          ...project,
+          tasks: updatedTasks,
         };
       });
 
-      localStorage.setItem("tasks", JSON.stringify(updatedTasks));
-      return { ...state, tasks: updatedTasks };
+      localStorage.setItem("projects", JSON.stringify(updatedProjects));
+      return { ...state, projects: updatedProjects };
     }
 
     case UPDATE_TASK_TIME: {
@@ -266,6 +289,119 @@ const tasksReducer = (state = initialState, action: TasksActionTypes): ITasksSta
     case SET_CURRENT_PROJECT: {
       const projectId = action.payload;
       return { ...state, currentProjectId: projectId };
+    }
+
+    case ADD_SUBTASK: {
+      const { taskId, projectId, subtask } = action.payload;
+      const projectIndex = state.projects.findIndex((p) => p.id === projectId);
+      if (projectIndex === -1) return state;
+
+      const updatedProjects = state.projects.map((project, index) => {
+        if (index !== projectIndex) return project;
+
+        const updateTask = (tasks: ITask[]): ITask[] => {
+          return tasks.map((task) => {
+            if (task.id === taskId) {
+              const newSubtask: ITask = {
+                ...subtask,
+                id: Date.now(),
+              };
+              return {
+                ...task,
+                subtasks: [...task.subtasks, newSubtask],
+              };
+            }
+            return {
+              ...task,
+              subtasks: updateTask(task.subtasks),
+            };
+          });
+        };
+
+        const updatedTasks = updateTask(project.tasks);
+
+        return {
+          ...project,
+          tasks: updatedTasks,
+        };
+      });
+
+      localStorage.setItem("projects", JSON.stringify(updatedProjects));
+      return { ...state, projects: updatedProjects };
+    }
+
+    case EDIT_SUBTASK: {
+      const { taskId, projectId, subtaskId, subtask } = action.payload;
+      const projectIndex = state.projects.findIndex((p) => p.id === projectId);
+      if (projectIndex === -1) return state;
+
+      const updatedProjects = state.projects.map((project, index) => {
+        if (index !== projectIndex) return project;
+
+        const updateTask = (tasks: ITask[]): ITask[] => {
+          return tasks.map((task) => {
+            if (task.id === taskId) {
+              const updatedSubtasks = task.subtasks.map((st) =>
+                st.id === subtaskId ? subtask : st
+              );
+              return {
+                ...task,
+                subtasks: updatedSubtasks,
+              };
+            }
+            return {
+              ...task,
+              subtasks: updateTask(task.subtasks),
+            };
+          });
+        };
+
+        const updatedTasks = updateTask(project.tasks);
+
+        return {
+          ...project,
+          tasks: updatedTasks,
+        };
+      });
+
+      localStorage.setItem("projects", JSON.stringify(updatedProjects));
+      return { ...state, projects: updatedProjects };
+    }
+
+    case DELETE_SUBTASK: {
+      const { taskId, projectId, subtaskId } = action.payload;
+      const projectIndex = state.projects.findIndex((p) => p.id === projectId);
+      if (projectIndex === -1) return state;
+
+      const updatedProjects = state.projects.map((project, index) => {
+        if (index !== projectIndex) return project;
+
+        const updateTask = (tasks: ITask[]): ITask[] => {
+          return tasks.map((task) => {
+            if (task.id === taskId) {
+              const filteredSubtasks = task.subtasks.filter((st) => st.id !== subtaskId);
+              return {
+                ...task,
+                subtasks: filteredSubtasks,
+              };
+            }
+            return {
+              ...task,
+              subtasks: updateTask(task.subtasks),
+            };
+          });
+        };
+
+        const updatedTasks = updateTask(project.tasks);
+
+        return {
+          ...project,
+          tasks: updatedTasks,
+        };
+      });
+
+      localStorage.setItem("projects", JSON.stringify(updatedProjects));
+      return { ...state, projects: updatedProjects };
     }
 
     default:

@@ -1,5 +1,5 @@
 import { useDrop } from "react-dnd";
-import TaskCard from "./TaskCard";
+import { TaskCard } from "./TaskCard";
 import { editTask } from "../../redux/actions/tasksActions";
 import { TasksActionTypes, ITask } from "../../redux/types/tasksTypes";
 import { Dispatch } from "redux";
